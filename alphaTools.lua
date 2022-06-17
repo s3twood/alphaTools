@@ -104,23 +104,6 @@ function kvadratnum(param)
   return KV[param]
 end
 
-function setMarker(type, x, y, z, radius, color)
-    deleteCheckpoint(marker)
-    removeBlip(checkpoint)
-    checkpoint = addBlipForCoord(x, y, z)
-    marker = createCheckpoint(type, x, y, z, 1, 1, 1, radius)
-    changeBlipColour(checkpoint, color)
-    lua_thread.create(function()
-    repeat
-        wait(0)
-        local x1, y1, z1 = getCharCoordinates(PLAYER_PED)
-        until getDistanceBetweenCoords3d(x, y, z, x1, y1, z1) < radius or not doesBlipExist(checkpoint)
-        deleteCheckpoint(marker)
-        removeBlip(checkpoint)
-        addOneOffSound(0, 0, 0, 1149)
-    end)
-end
-
 function setMarkerKV(arg)
 
 	kvl, kvn = string.match(arg, "(%W)%-(%d+)")
