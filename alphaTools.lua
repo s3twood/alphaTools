@@ -10,14 +10,13 @@ local zad = false
 local stateKLK = false
 local firstKLK = true
 local coordOn = true
-local colorSheme = { firstColor = "{4169E1}", secondColor = "{ffffff}"}
+local colorSheme = { firstColor = "{FF0000}", secondColor = "{ffffff}"}
 
 function addScriptMsg(str)
 	sampAddChatMessage("{4169E1}[ALPHA]: "..colorSheme.secondColor..str, 0xFFFFFF)
 end
 
 function kvadrat()
-
 	local KV = {
         [1] = "А",
         [2] = "Б",
@@ -110,7 +109,6 @@ end
 
 
 function setMarkerKV(arg)
-
 	kvl, kvn = string.match(arg, "(%W)%-(%d+)")
 	if (kvl == nil or kvn == nil) then 
 		kvl, kvn = string.match(arg, "(%W)(%d+)")
@@ -205,29 +203,28 @@ end
 
 function COORDTest()
 	if not coordOn then return end
-		local naprav = ""
-		if getCharHeading(PLAYER_PED) >= 337.5 or getCharHeading(PLAYER_PED) <= 22.5 then naprav = "Северное" end
-        if getCharHeading(PLAYER_PED) > 22.5 and getCharHeading(PLAYER_PED) <= 67.5 then naprav = "Северо-западное" end
-        if getCharHeading(PLAYER_PED) > 67.5 and getCharHeading(PLAYER_PED) <= 112.5 then naprav = "Западное" end
-        if getCharHeading(PLAYER_PED) > 112.5 and getCharHeading(PLAYER_PED) <= 157.5 then naprav = "Юго-западное" end
-        if getCharHeading(PLAYER_PED) > 157.5 and getCharHeading(PLAYER_PED) <= 202.5 then naprav = "Южное" end
-        if getCharHeading(PLAYER_PED) > 202.5 and getCharHeading(PLAYER_PED) <= 247.5 then naprav = "Юго-восточное" end
-        if getCharHeading(PLAYER_PED) > 247.5 and getCharHeading(PLAYER_PED) <= 292.5 then naprav = "Восточное" end
-        if getCharHeading(PLAYER_PED) > 292.5 and getCharHeading(PLAYER_PED) <= 337.5 then naprav = "Северо-восточное" end
 		
-		local pedx, pedy, pedz = getCharCoordinates(PLAYER_PED)
-		local bool, waypointx, waypointy, waypointz = getTargetBlipCoordinates()
-		
-		if (bool) then 
-			renderFontDrawText(logo, "Направление: "..setColor(naprav).."\nКвадрат: " ..setColor(kvadrat()).."\nВысота: "..setColor(math.floor(pedz)).."\nМетка: "..setColor(math.floor(math.sqrt((waypointx-pedx)*(waypointx-pedx) + (waypointy-pedy)*(waypointy-pedy))*100)/100), plashka.x, plashka.y, 0xFFFFFFFF)
-		else
-			renderFontDrawText(logo, "Направление: "..setColor(naprav).."\nКвадрат: " ..setColor(kvadrat()).."\nВысота: "..setColor(math.floor(pedz)), plashka.x, plashka.y, 0xFFFFFFFF)
-		end
+	local naprav = ""
+	if getCharHeading(PLAYER_PED) >= 337.5 or getCharHeading(PLAYER_PED) <= 22.5 then naprav = "Северное" end
+       if getCharHeading(PLAYER_PED) > 22.5 and getCharHeading(PLAYER_PED) <= 67.5 then naprav = "Северо-западное" end
+       if getCharHeading(PLAYER_PED) > 67.5 and getCharHeading(PLAYER_PED) <= 112.5 then naprav = "Западное" end
+       if getCharHeading(PLAYER_PED) > 112.5 and getCharHeading(PLAYER_PED) <= 157.5 then naprav = "Юго-западное" end
+       if getCharHeading(PLAYER_PED) > 157.5 and getCharHeading(PLAYER_PED) <= 202.5 then naprav = "Южное" end
+       if getCharHeading(PLAYER_PED) > 202.5 and getCharHeading(PLAYER_PED) <= 247.5 then naprav = "Юго-восточное" end
+       if getCharHeading(PLAYER_PED) > 247.5 and getCharHeading(PLAYER_PED) <= 292.5 then naprav = "Восточное" end
+       if getCharHeading(PLAYER_PED) > 292.5 and getCharHeading(PLAYER_PED) <= 337.5 then naprav = "Северо-восточное" end
+	
+	local pedx, pedy, pedz = getCharCoordinates(PLAYER_PED)
+	local bool, waypointx, waypointy, waypointz = getTargetBlipCoordinates()
+	
+	if (bool) then 
+		renderFontDrawText(logo, "Направление: "..setColor(naprav).."\nКвадрат: " ..setColor(kvadrat()).."\nВысота: "..setColor(math.floor(pedz)).."\nМетка: "..setColor(math.floor(math.sqrt((waypointx-pedx)*(waypointx-pedx) + (waypointy-pedy)*(waypointy-pedy))*100)/100), plashka.x, plashka.y, 0xFFFFFFFF)
+	else
+		renderFontDrawText(logo, "Направление: "..setColor(naprav).."\nКвадрат: " ..setColor(kvadrat()).."\nВысота: "..setColor(math.floor(pedz)), plashka.x, plashka.y, 0xFFFFFFFF)
+	end
 end
 
-function coord()
-	coordOn = not coordOn
-end
+
 
 function doEveryTime()
 	KLKTest()
@@ -235,48 +232,56 @@ function doEveryTime()
 	COORDTest()
 end
 
+function loadSettings()
+	local file = io.open("moonloader\\config\\alphaTools.ini", "r")
+	
+	if (file == nil) then
+		file = io.open("moonloader\\config\\alphaTools.ini", "w+")
+		file:write(plashka.x.." "..plashka.y)
+		file:close()
+	else
+		local xpos, ypos = string.match(file:read("*line"), "(%d+) (%d+)")
+		file:close()
+		if (xpos == nil or ypos == nil) then 
+			addScriptMsg("Ошибка чтения файла. Файл перезаписан.")
+			file = io.open("moonloader\\config\\alphaTools.ini", "w+")
+			file:write(plashka.x.." "..plashka.y)
+			file:close()
+		else
+			plashka.x = xpos
+			plashka.y = ypos
+		end
+	end
+end
+
+function coordpos(args)
+	local xpos, ypos = string.match(args, "(%d+) (%d+)")
+	
+	if (xpos == nil or ypos == nil) then 
+		addScriptMsg("Используйте /coordpos "..setColor("[x] [y]"))
+		return
+	end
+	
+	plashka.x = xpos;
+	plashka.y = ypos;
+	
+	local file = io.open("moonloader\\config\\alphaTools.ini", "w")
+	file:write(xpos.." "..ypos)
+	file:close()
+end
+
+
 function main()
 	if not isSampLoaded() or not isSampfuncsLoaded() then return end
 		while not isSampAvailable() do wait(100) end
 	
 	
-	local file = io.open("moonloader\\config\\alphaTools.ini", "r")
-	
-		if (file == nil) then
-			file = io.open("moonloader\\config\\alphaTools.ini", "w+")
-			file:write(plashka.x.." "..plashka.y)
-			file:close()
-		else
-			local xpos, ypos = string.match(file:read("*line"), "(%d+) (%d+)")
-			file:close()
-			if (xpos == nil or ypos == nil) then 
-				addScriptMsg("Ошибка чтения файла. Файл перезаписан.")
-				file = io.open("moonloader\\config\\alphaTools.ini", "w+")
-				file:write(plashka.x.." "..plashka.y)
-				file:close()
-			else
-				plashka.x = xpos
-				plashka.y = ypos
-			end
-		end
+	loadSettings()
 	
 	sampRegisterChatCommand("setkv", setMarkerKV)
+	sampRegisterChatCommand("coordpos", coordpos)
+	sampRegisterChatCommand("coord", function() coordOn = not coordOn end)
 	
-	sampRegisterChatCommand("coordpos", function(args)
-		local xpos, ypos = string.match(args, "(%d+) (%d+)")
-		if (xpos == nil or ypos == nil) then 
-			addScriptMsg("Используйте /coordpos {ff0000}[x] [y]")
-			return
-		end
-		plashka.x = xpos;
-		plashka.y = ypos;
-		
-		local file = io.open("moonloader\\config\\alphaTools.ini", "w")
-		file:write(xpos.." "..ypos)
-		file:close()
-	end)
-	
-	sampRegisterChatCommand("coord", coord)
 	while true do wait(0)
 		testCheats()
 		doEveryTime()
