@@ -2,19 +2,23 @@ local events = require 'lib.samp.events'
 require "lib.moonloader"
 require "lib.sampfuncs"
 
-
 local plashka = {show = true,x = "10", y = "450"} -- Тут редактируйте расположение инфы.
-local sx, sy = getScreenResolution()
-local logo = renderCreateFont('BigNoodleTitlingCyr', 10, 0) -- А тут редактируйте размер текста. Сейчас размер текста "14".
+local logo = renderCreateFont('BigNoodleTitlingCyr', 14, 4) -- А тут редактируйте размер текста. Сейчас размер текста "14".
 local result
 local car = nil
 local zad = false
 local stateKLK = false
 local firstKLK = true
 local coordOn = true
+local colorSheme = { firstColor = "{FF0000}", secondColor = "{FFFFFF}"}
+
+function addScriptMsg(str)
+	sampAddChatMessage("{4169E1}[ALPHA]: {ffffff}"..str, 0xFFFFFF)
+end
 
 function kvadrat()
-local KV = {
+
+	local KV = {
         [1] = "А",
         [2] = "Б",
         [3] = "В",
@@ -104,6 +108,7 @@ function kvadratnum(param)
   return KV[param]
 end
 
+
 function setMarkerKV(arg)
 
 	kvl, kvn = string.match(arg, "(%W)%-(%d+)")
@@ -112,13 +117,11 @@ function setMarkerKV(arg)
 	end
 		
 	if (kvl == nil or kvn == nil) then 
-		sampAddChatMessage("{4169E1}[APLHA]: {ffffff}Используйте /setkv {ff0000}[квадрат]{ffffff}. Пример: /setkv {ff0000}А-1", 0xFFFFFF)
+		addScriptMsg("Используйте /setkv"..setColor("[квадрат]")..". Пример: /setkv"..setColor("А-1"))
 		return 
 	end
 	
 	if (kvadratnum(kvl) ~= nil and tonumber(kvn) > 0 and tonumber(kvn) < 25) then
-		
-		
 		local coordx = tonumber(kvn)*250-3250 + 125
 		local coordy = 3250-kvadratnum(kvl)*250 - 125
 		
@@ -126,13 +129,13 @@ function setMarkerKV(arg)
 		
 		if (placeWaypoint(coordx, coordy, pedz) == true) then
 			local dist = math.floor(math.sqrt((coordx-pedx)*(coordx-pedx) + (coordy-pedy)*(coordy-pedy))*100)/100
-			sampAddChatMessage("{4169E1}[APLHA]: {ffffff}Метка установлена в квадрат {ff0000}"..kvl.."-"..kvn..". {ffffff}Расстояние: {ff0000}"..dist.." {ffffff}метров.", 0xFFFFFF)
+			addScriptMsg("Метка установлена в квадрат "..setColor(kvl).."-"..setColor(kvn)..". Расстояние: "..setColor(dist).." метров.")
 		else
-			sampAddChatMessage("{4169E1}[APLHA]: {ffffff}Поставьте метку в любой точке карты для работы", 0xFFFFFF)
+			addScriptMsg("Неизвестная ошибка")
 		end
 		
 	else 
-		sampAddChatMessage("{4169E1}[APLHA]: {ffffff}Такого квадрата не существует", 0xFFFFFF)
+		addScriptMsg("Такого квадрата не существует")
 	end
 	
 	
@@ -142,21 +145,25 @@ function testCheats()
 	if testCheat('KLK') then
 		stateKLK = not stateKLK
 		firstKLK = true
-		if stateKLK then printStringNow('~g~+', 1000) 
-		else printStringNow('~r~-', 1000) 
+		if stateKLK then 
+			if (KLKTest() == true) then 
+				addScriptMsg("KLK активирован.") 
+			else
+				addScriptMsg("KLK не может быть активирован.") 
+			end
+		else 
+			addScriptMsg("KLK отключен.") 
 		end
 	end
 	
 	if testCheat('ZAD') then 
 		zad = not zad
 		if zad then
-			printStringNow('~g~ZAD', 1000) 
+			addScriptMsg("ZAD активирован.")
 		else
-			printStringNow('~r~ZAD', 1000) 
+			addScriptMsg("ZAD отключен.")
 		end
 	end
-	
-	
 end
 
 function KLKTest()
@@ -172,23 +179,29 @@ function KLKTest()
 					end	
 				elseif firstKLK == true then
 					printStringNow('~y~'..string.sub(tostring(getCarSpeed(veh)),0,4), 1000)
+					return true
 				end
 			else 
 				stateKLK = false
 				firstKLK = true
-				printStringNow('', 1000) 
 			end
 		else 
 			stateKLK = false
 			firstKLK = true
-			printStringNow('', 1000) 
 		end
 	end
+	return false
 end
 
 function ZADTest()
 	if zad then setCameraBehindPlayer() end
 end
+
+function setColor(str)
+	return colorSheme.firstColor..str..colorSheme.secondColor
+end
+
+
 
 function COORDTest()
 	if not coordOn then return end
@@ -201,10 +214,14 @@ function COORDTest()
         if getCharHeading(PLAYER_PED) > 202.5 and getCharHeading(PLAYER_PED) <= 247.5 then naprav = "Юго-восточное" end
         if getCharHeading(PLAYER_PED) > 247.5 and getCharHeading(PLAYER_PED) <= 292.5 then naprav = "Восточное" end
         if getCharHeading(PLAYER_PED) > 292.5 and getCharHeading(PLAYER_PED) <= 337.5 then naprav = "Северо-восточное" end
+		
 		local pedx, pedy, pedz = getCharCoordinates(PLAYER_PED)
-		
-		renderFontDrawText(logo, "Направление: "..naprav.."\nКвадрат: " ..kvadrat().."\nВысота: "..math.floor(pedz), plashka.x, sy-plashka.y+renderGetFontDrawHeight(logo), 0xFFFFFFFF)
-		
+		local bool, waypointx, waypointy, waypointz = getTargetBlipCoordinates()
+		if (bool) then 
+			renderFontDrawText(logo, "Направление: "..setColor(naprav).."\nКвадрат: " ..setColor(kvadrat()).."\nВысота: "..setColor(math.floor(pedz)).."\nМетка: "..setColor(math.floor(math.sqrt((waypointx-pedx)*(waypointx-pedx) + (waypointy-pedy)*(waypointy-pedy))*100)/100), plashka.x, plashka.y, 0xFFFFFFFF)
+		else
+			renderFontDrawText(logo, "Направление: "..setColor(naprav).."\nКвадрат: " ..setColor(kvadrat()).."\nВысота: "..setColor(math.floor(pedz)), plashka.x, plashka.y, 0xFFFFFFFF)
+		end
 end
 
 function coord()
@@ -221,7 +238,43 @@ function main()
 	if not isSampLoaded() or not isSampfuncsLoaded() then return end
 		while not isSampAvailable() do wait(100) end
 	
+	
+	local file = io.open("moonloader\\config\\alphaTools.ini", "r")
+	
+		if (file == nil) then
+			file = io.open("moonloader\\config\\alphaTools.ini", "w+")
+			file:write(plashka.x.." "..plashka.y)
+			file:close()
+		else
+			local xpos, ypos = string.match(file:read("*line"), "(%d+) (%d+)")
+			file:close()
+			if (xpos == nil or ypos == nil) then 
+				addScriptMsg("Ошибка чтения файла. Файл перезаписан.")
+				file = io.open("moonloader\\config\\alphaTools.ini", "w+")
+				file:write(plashka.x.." "..plashka.y)
+				file:close()
+			else
+				plashka.x = xpos
+				plashka.y = ypos
+			end
+		end
+	
 	sampRegisterChatCommand("setkv", setMarkerKV)
+	
+	sampRegisterChatCommand("coordpos", function(args)
+		local xpos, ypos = string.match(args, "(%d+) (%d+)")
+		if (xpos == nil or ypos == nil) then 
+			addScriptMsg("Используйте /coordpos {ff0000}[x] [y]")
+			return
+		end
+		plashka.x = xpos;
+		plashka.y = ypos;
+		
+		local file = io.open("moonloader\\config\\alphaTools.ini", "w")
+		file:write(xpos.." "..ypos)
+		file:close()
+	end)
+	
 	sampRegisterChatCommand("coord", coord)
 	while true do wait(0)
 		testCheats()
