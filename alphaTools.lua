@@ -127,7 +127,7 @@ function setMarkerKV(arg)
 		
 		if (placeWaypoint(coordx, coordy, pedz) == true) then
 			local dist = math.floor(math.sqrt((coordx-pedx)*(coordx-pedx) + (coordy-pedy)*(coordy-pedy))*100)/100
-			addScriptMsg("Метка установлена в квадрат "..setColor(kvl).."-"..setColor(kvn)..". Расстояние: "..setColor(dist).." метров.")
+			addScriptMsg("Метка установлена в квадрат "..setColor(kvl.."-"..kvn)..". Расстояние: "..setColor(dist).." метров.")
 		else
 			addScriptMsg("Неизвестная ошибка.")
 		end
@@ -174,6 +174,7 @@ function KLKTest()
 					if (firstKLK == true) then 
 						printStringNow('~y~Stayed', 1000)
 						firstKLK = false
+						return true
 					end	
 				elseif firstKLK == true then
 					printStringNow('~y~'..string.sub(tostring(getCarSpeed(veh)),0,4), 1000)
@@ -278,9 +279,14 @@ function main()
 	
 	loadSettings()
 	
+	sampRegisterChatCommand("alphahelp", function()
+		sampShowDialog(6405, "AlphaTools", "{4169E1}/alphahelp {ffffff}- функции скрипта\n{4169E1}/setkv [квадрат] {ffffff}- устанавливает метку в выбранный квадрат\n{4169E1}/coord {ffffff}- включает/отключает меню координации\n{4169E1}/coordpos [x] [y] {ffffff}- устанавливает позицию меню координации\n{4169E1}KLK {ffffff}- как чит-код, останавливает Maverick в воздухе, если скорость меньше 2-ух\n{4169E1}ZAD {ffffff}- как чит-код, фиксирует камеру за персонажем","Закрыть","Закрыть",0)
+	end)
+	
 	sampRegisterChatCommand("setkv", setMarkerKV)
 	sampRegisterChatCommand("coordpos", coordpos)
 	sampRegisterChatCommand("coord", function() coordOn = not coordOn end)
+	addScriptMsg("AlphaTools загружен. Помощь: /alphahelp.")
 	
 	while true do wait(0)
 		testCheats()
