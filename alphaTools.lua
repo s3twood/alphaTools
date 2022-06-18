@@ -2,8 +2,8 @@ local events = require 'lib.samp.events'
 require "lib.moonloader"
 require "lib.sampfuncs"
 
-local plashka = {show = true,x = "10", y = "450"} -- Тут редактируйте расположение инфы.
-local logo = renderCreateFont('BigNoodleTitlingCyr', 14, 4) -- А тут редактируйте размер текста. Сейчас размер текста "14".
+local plashka = {show = true,x = "10", y = "450"} 
+local logo = renderCreateFont('BigNoodleTitlingCyr', 14, 4)
 local result
 local car = nil
 local zad = false
@@ -115,7 +115,7 @@ function setMarkerKV(arg)
 	end
 		
 	if (kvl == nil or kvn == nil) then 
-		addScriptMsg("Используйте /setkv"..setColor("[квадрат]")..". Пример: /setkv"..setColor("А-1"))
+		addScriptMsg("Используйте /setkv "..setColor("[квадрат]")..". Пример: /setkv "..setColor("А-1"))
 		return 
 	end
 	
@@ -129,11 +129,11 @@ function setMarkerKV(arg)
 			local dist = math.floor(math.sqrt((coordx-pedx)*(coordx-pedx) + (coordy-pedy)*(coordy-pedy))*100)/100
 			addScriptMsg("Метка установлена в квадрат "..setColor(kvl).."-"..setColor(kvn)..". Расстояние: "..setColor(dist).." метров.")
 		else
-			addScriptMsg("Неизвестная ошибка")
+			addScriptMsg("Неизвестная ошибка.")
 		end
 		
 	else 
-		addScriptMsg("Такого квадрата не существует")
+		addScriptMsg("Такого квадрата не существует.")
 	end
 	
 	
