@@ -10,10 +10,10 @@ local zad = false
 local stateKLK = false
 local firstKLK = true
 local coordOn = true
-local colorSheme = { firstColor = "{FF0000}", secondColor = "{FFFFFF}"}
+local colorSheme = { firstColor = "{4169E1}", secondColor = "{ffffff}"}
 
 function addScriptMsg(str)
-	sampAddChatMessage("{4169E1}[ALPHA]: {ffffff}"..str, 0xFFFFFF)
+	sampAddChatMessage("{4169E1}[ALPHA]: "..colorSheme.secondColor..str, 0xFFFFFF)
 end
 
 function kvadrat()
@@ -217,6 +217,7 @@ function COORDTest()
 		
 		local pedx, pedy, pedz = getCharCoordinates(PLAYER_PED)
 		local bool, waypointx, waypointy, waypointz = getTargetBlipCoordinates()
+		
 		if (bool) then 
 			renderFontDrawText(logo, "Направление: "..setColor(naprav).."\nКвадрат: " ..setColor(kvadrat()).."\nВысота: "..setColor(math.floor(pedz)).."\nМетка: "..setColor(math.floor(math.sqrt((waypointx-pedx)*(waypointx-pedx) + (waypointy-pedy)*(waypointy-pedy))*100)/100), plashka.x, plashka.y, 0xFFFFFFFF)
 		else
