@@ -2,7 +2,7 @@ local events = require 'lib.samp.events'
 require "lib.moonloader"
 require "lib.sampfuncs"
 
-local plashka = {show = true,x = "10", y = "450"} 
+local plashka = {show = true,x = "10", y = "450"}
 local logo = renderCreateFont('BigNoodleTitlingCyr', 14, 4)
 local result
 local car = nil
@@ -10,7 +10,16 @@ local zad = false
 local stateKLK = false
 local firstKLK = true
 local coordOn = true
+local autoSetKV = true
 local colorSheme = { firstColor = "{FF0000}", secondColor = "{ffffff}"}
+
+
+function events.onServerMessage(color, text)
+	if(color ~= 865730559) then return end
+
+	local kv1 = string.match(text, "Alpha, текущее местоположение (%W%-%d+)%.")
+	if (kv1 ~= nil and autoSetKV == true) then setMarkerKV(kv1) end
+end
 
 function addScriptMsg(str)
 	sampAddChatMessage("{4169E1}[ALPHA]: "..colorSheme.secondColor..str, 0xFFFFFF)
@@ -110,51 +119,51 @@ end
 
 function setMarkerKV(arg)
 	kvl, kvn = string.match(arg, "(%W)%-(%d+)")
-	if (kvl == nil or kvn == nil) then 
+	if (kvl == nil or kvn == nil) then
 		kvl, kvn = string.match(arg, "(%W)(%d+)")
 	end
-		
-	if (kvl == nil or kvn == nil) then 
+
+	if (kvl == nil or kvn == nil) then
 		addScriptMsg("Используйте /setkv "..setColor("[квадрат]")..". Пример: /setkv "..setColor("А-1"))
-		return 
+		return
 	end
-	
+
 	if (kvadratnum(kvl) ~= nil and tonumber(kvn) > 0 and tonumber(kvn) < 25) then
 		local coordx = tonumber(kvn)*250-3250 + 125
 		local coordy = 3250-kvadratnum(kvl)*250 - 125
-		
+
 		local pedx, pedy, pedz = getCharCoordinates(PLAYER_PED)
-		
+
 		if (placeWaypoint(coordx, coordy, pedz) == true) then
 			local dist = math.floor(math.sqrt((coordx-pedx)*(coordx-pedx) + (coordy-pedy)*(coordy-pedy))*100)/100
 			addScriptMsg("Метка установлена в квадрат "..setColor(kvl.."-"..kvn)..". Расстояние: "..setColor(dist).." метров.")
 		else
 			addScriptMsg("Неизвестная ошибка.")
 		end
-		
-	else 
+
+	else
 		addScriptMsg("Такого квадрата не существует.")
 	end
-	
-	
+
+
 end
 
 function testCheats()
 	if testCheat('KLK') then
 		stateKLK = not stateKLK
 		firstKLK = true
-		if stateKLK then 
-			if (KLKTest() == true) then 
-				addScriptMsg("KLK активирован.") 
+		if stateKLK then
+			if (KLKTest() == true) then
+				addScriptMsg("KLK активирован.")
 			else
-				addScriptMsg("KLK не может быть активирован.") 
+				addScriptMsg("KLK не может быть активирован.")
 			end
-		else 
-			addScriptMsg("KLK отключен.") 
+		else
+			addScriptMsg("KLK отключен.")
 		end
 	end
-	
-	if testCheat('ZAD') then 
+
+	if testCheat('ZAD') then
 		zad = not zad
 		if zad then
 			addScriptMsg("ZAD активирован.")
@@ -162,29 +171,34 @@ function testCheats()
 			addScriptMsg("ZAD отключен.")
 		end
 	end
+
+	if testCheat('BK') then
+		sampSendChat("/d Alpha, текущее местоположение "..kvadrat()..".")
+	end
+
 end
 
 function KLKTest()
 	if stateKLK then
 		if (isCharInModel(PLAYER_PED, 487) or isCharInModel(PLAYER_PED, 497)) then
 			local veh = storeCarCharIsInNoSave(PLAYER_PED)
-			if isCarEngineOn(veh) then 
-				if getCarSpeed(veh) < 2 then 
-					setCarForwardSpeed(veh, 0) 
-					if (firstKLK == true) then 
+			if isCarEngineOn(veh) then
+				if getCarSpeed(veh) < 2 then
+					setCarForwardSpeed(veh, 0)
+					if (firstKLK == true) then
 						printStringNow('~y~Stayed', 1000)
 						firstKLK = false
 						return true
-					end	
+					end
 				elseif firstKLK == true then
 					printStringNow('~y~'..string.sub(tostring(getCarSpeed(veh)),0,4), 1000)
 					return true
 				end
-			else 
+			else
 				stateKLK = false
 				firstKLK = true
 			end
-		else 
+		else
 			stateKLK = false
 			firstKLK = true
 		end
@@ -204,7 +218,7 @@ end
 
 function COORDTest()
 	if not coordOn then return end
-		
+
 	local naprav = ""
 	if getCharHeading(PLAYER_PED) >= 337.5 or getCharHeading(PLAYER_PED) <= 22.5 then naprav = "Северное" end
        if getCharHeading(PLAYER_PED) > 22.5 and getCharHeading(PLAYER_PED) <= 67.5 then naprav = "Северо-западное" end
@@ -214,11 +228,11 @@ function COORDTest()
        if getCharHeading(PLAYER_PED) > 202.5 and getCharHeading(PLAYER_PED) <= 247.5 then naprav = "Юго-восточное" end
        if getCharHeading(PLAYER_PED) > 247.5 and getCharHeading(PLAYER_PED) <= 292.5 then naprav = "Восточное" end
        if getCharHeading(PLAYER_PED) > 292.5 and getCharHeading(PLAYER_PED) <= 337.5 then naprav = "Северо-восточное" end
-	
+
 	local pedx, pedy, pedz = getCharCoordinates(PLAYER_PED)
 	local bool, waypointx, waypointy, waypointz = getTargetBlipCoordinates()
-	
-	if (bool) then 
+
+	if (bool) then
 		renderFontDrawText(logo, "Направление: "..setColor(naprav).."\nКвадрат: " ..setColor(kvadrat()).."\nВысота: "..setColor(math.floor(pedz)).."\nМетка: "..setColor(math.floor(math.sqrt((waypointx-pedx)*(waypointx-pedx) + (waypointy-pedy)*(waypointy-pedy))*100)/100), plashka.x, plashka.y, 0xFFFFFFFF)
 	else
 		renderFontDrawText(logo, "Направление: "..setColor(naprav).."\nКвадрат: " ..setColor(kvadrat()).."\nВысота: "..setColor(math.floor(pedz)), plashka.x, plashka.y, 0xFFFFFFFF)
@@ -235,7 +249,7 @@ end
 
 function loadSettings()
 	local file = io.open("moonloader\\config\\alphaTools.ini", "r")
-	
+
 	if (file == nil) then
 		file = io.open("moonloader\\config\\alphaTools.ini", "w+")
 		file:write(plashka.x.." "..plashka.y)
@@ -243,7 +257,7 @@ function loadSettings()
 	else
 		local xpos, ypos = string.match(file:read("*line"), "(%d+) (%d+)")
 		file:close()
-		if (xpos == nil or ypos == nil) then 
+		if (xpos == nil or ypos == nil) then
 			addScriptMsg("Ошибка чтения файла. Файл перезаписан.")
 			file = io.open("moonloader\\config\\alphaTools.ini", "w+")
 			file:write(plashka.x.." "..plashka.y)
@@ -257,15 +271,15 @@ end
 
 function coordpos(args)
 	local xpos, ypos = string.match(args, "(%d+) (%d+)")
-	
-	if (xpos == nil or ypos == nil) then 
+
+	if (xpos == nil or ypos == nil) then
 		addScriptMsg("Используйте /coordpos "..setColor("[x] [y]"))
 		return
 	end
-	
+
 	plashka.x = xpos;
 	plashka.y = ypos;
-	
+
 	local file = io.open("moonloader\\config\\alphaTools.ini", "w")
 	file:write(xpos.." "..ypos)
 	file:close()
@@ -275,21 +289,45 @@ end
 function main()
 	if not isSampLoaded() or not isSampfuncsLoaded() then return end
 		while not isSampAvailable() do wait(100) end
-	
-	
+
+
 	loadSettings()
-	
+
 	sampRegisterChatCommand("alphahelp", function()
-		sampShowDialog(6405, "AlphaTools", "{4169E1}/alphahelp {ffffff}- функции скрипта\n{4169E1}/setkv [квадрат] {ffffff}- устанавливает метку в выбранный квадрат\n{4169E1}/coord {ffffff}- включает/отключает меню координации\n{4169E1}/coordpos [x] [y] {ffffff}- устанавливает позицию меню координации\n{4169E1}KLK {ffffff}- как чит-код, останавливает Maverick в воздухе, если скорость меньше 2-ух\n{4169E1}ZAD {ffffff}- как чит-код, фиксирует камеру за персонажем","Закрыть","Закрыть",0)
+		sampShowDialog(6405, "AlphaTools",
+		[[
+{4169E1}/alphahelp {ffffff}- функции скрипта.
+{4169E1}/setkv [квадрат] {ffffff}- устанавливает метку в выбранный квадрат.
+{4169E1}/coord {ffffff}- включает/отключает меню координации.
+{4169E1}/coordpos [x] [y] {ffffff}- устанавливает позицию меню координации.
+{4169E1}/autokv {ffffff}- автоматическая установка метки при сообщении в департамент.
+
+{4169E1}KLK {ffffff}- как чит-код, останавливает Maverick в воздухе, если скорость меньше 2-ух.
+{4169E1}ZAD {ffffff}- как чит-код, фиксирует камеру за персонажем.
+{4169E1}BK {ffffff}- как чит-код, отправляет информацию о текущем местоположении в департамент.
+]],
+		"Закрыть",
+		"",
+		0)
 	end)
-	
+
 	sampRegisterChatCommand("setkv", setMarkerKV)
 	sampRegisterChatCommand("coordpos", coordpos)
-	sampRegisterChatCommand("coord", function() coordOn = not coordOn end)
-	
+
+	sampRegisterChatCommand("coord", function()
+		coordOn = not coordOn
+		if coordOn then addScriptMsg("Меню координации включено.")
+		else addScriptMsg("Меню координации отключено.") end
+	end)
+
+	sampRegisterChatCommand("autokv", function()
+		autoSetKV = not autoSetKV
+		if autoSetKV then addScriptMsg("Автометка включена.")
+		else addScriptMsg("Автометка отключена.") end
+	end)
 
 	addScriptMsg("AlphaTools загружен. Помощь: /alphahelp.")
-	
+
 	while true do wait(0)
 		testCheats()
 		doEveryTime()
