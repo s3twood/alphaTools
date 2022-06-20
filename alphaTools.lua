@@ -13,7 +13,10 @@ local firstKLK = true
 local configPath = "alphaTools.ini"
 local callRecorderPath = "moonloader\\callRecord.txt"
 local activeCall = false
-
+local contactTimer = os.time()
+local goFind = false
+local searchTime = 900
+local inSearch = false
 
 local config = inicfg.load({
 	coordMenu = 
@@ -48,6 +51,23 @@ function events.onServerMessage(color, text)
 	if(config.autokv.active and color == 865730559) then 
 		local kv1 = string.match(text, "Alpha, текущее местоположение (%W%-%d+)%.")
 		if (kv1 ~= nil) then setMarkerKV(kv1) end
+	end
+	
+	if(color == 865730559) then 
+		local kv1 = string.match(text, "Alpha, визуальный контакт с нарушителем потерян в (%W%-%d+)%. Начинайте поиски.")
+		if (kv1 ~= nil) then
+			goFind = true
+			setMarkerKV(kv1)
+			contactTimer = os.time()
+		end
+	end
+	
+	if(color == 865730559) then 
+		local kv1 = string.match(text, "Alpha, визуальный контакт с нарушителем получен в (%W%-%d+)%. Веду погоню.")
+		if (kv1 ~= nil) then 
+			goFind = false
+			setMarkerKV(kv1)
+		end
 	end
 	
 	
@@ -243,6 +263,8 @@ function testCheats()
 	if testCheat('BK') then
 		sampSendChat("/d Alpha, текущее местоположение "..kvadrat()..".")
 	end
+	
+	
 
 end
 
@@ -299,19 +321,37 @@ function COORDTest()
 
 	local pedx, pedy, pedz = getCharCoordinates(PLAYER_PED)
 	local bool, waypointx, waypointy, waypointz = getTargetBlipCoordinates()
+	
+	
+	
 
-	if (bool) then
-		renderFontDrawText(logo, "Направление: "..setColor(naprav).."\nКвадрат: " ..setColor(kvadrat()).."\nВысота: "..setColor(math.floor(pedz)).."\nМетка: "..setColor(math.floor(math.sqrt((waypointx-pedx)*(waypointx-pedx) + (waypointy-pedy)*(waypointy-pedy))*100)/100), config.coordMenu.x, config.coordMenu.y, 0xFFFFFFFF)
-	else
-		renderFontDrawText(logo, "Направление: "..setColor(naprav).."\nКвадрат: " ..setColor(kvadrat()).."\nВысота: "..setColor(math.floor(pedz)), config.coordMenu.x, config.coordMenu.y, 0xFFFFFFFF)
+	local renderString = "Направление: "..setColor(naprav).."\nКвадрат: " ..setColor(kvadrat()).."\nВысота: "..setColor(math.floor(pedz))
+	if (bool) then renderString = renderString.."\nМетка: "..setColor(math.floor(math.sqrt((waypointx-pedx)*(waypointx-pedx) + (waypointy-pedy)*(waypointy-pedy))*100)/100) end
+	if (goFind) then
+		local findTime = contactTimer+searchTime-os.time()
+		local findTimeMin = math.floor(findTime/60)
+		local findTimeSec = findTime%60
+		renderString = renderString.."\nПоиски: "..setColor(findTimeMin..":"..findTimeSec)
 	end
+
+	
+	renderFontDrawText(logo, renderString, config.coordMenu.x, config.coordMenu.y, 0xFFFFFFFF)
+	
+	
 end
 
+function findTest()
+	if (goFind and contactTimer+searchTime-os.time() < 1) then
+		goFind = false
+		addScriptMsg("Бандиты потеряны. Погоня не ведётся.")
+	end
+end
 
 function doEveryTime()
 	KLKTest()
 	ZADTest()
 	COORDTest()
+	findTest()
 end
 
 
@@ -330,12 +370,11 @@ function coordpos(args)
 	
 end
 
-
 function main()
 	if not isSampLoaded() or not isSampfuncsLoaded() then return end
 		while not isSampAvailable() do wait(100) end
 	
-
+	
 	sampRegisterChatCommand("alphahelp", function()
 		sampShowDialog(6405, "AlphaTools",
 		[[
@@ -345,6 +384,8 @@ function main()
 {4169E1}/coordpos [x] [y] {ffffff}- устанавливает позицию меню координации.
 {4169E1}/autokv {ffffff}- автоматическая установка метки при сообщении в департамент.
 {4169E1}/onlycall {ffffff}- при разговоре по телефону все остальные сообщения в чате не отображаются.
+{4169E1}/fc {ffffff}- получен визуальный контакт с бандитами. Убирает таймер погони.
+{4169E1}/lc {ffffff}- потерян визуальный контакт с бандитами. Запускается таймер погони.
 
 {4169E1}KLK {ffffff}- как чит-код, останавливает Maverick в воздухе, если скорость меньше 2-ух.
 {4169E1}ZAD {ffffff}- как чит-код, фиксирует камеру за персонажем.
@@ -398,6 +439,22 @@ function main()
 			inicfg.save(config, configPath)
 			end
 	end)
+	
+	sampRegisterChatCommand("fc", function()
+			addScriptMsg("Визуальный контакт получен.")
+			sampSendChat("/d Alpha, визуальный контакт с нарушителем получен в "..kvadrat()..". Веду погоню.")
+			
+	end)
+		sampRegisterChatCommand("lc", function()
+			if (goFind) then 
+				addScriptMsg("В данный момент и так ведутся поиски.")
+			else
+				addScriptMsg("Визуальный контакт потерян.")
+				sampSendChat("/d Alpha, визуальный контакт с нарушителем потерян в "..kvadrat()..". Начинайте поиски.")
+			end
+	end)
+	
+	
 
 	addScriptMsg("AlphaTools загружен. Помощь: /alphahelp.")
 
