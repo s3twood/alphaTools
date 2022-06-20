@@ -1,8 +1,9 @@
 local events = require 'lib.samp.events'
+local inicfg = require 'inicfg'
 require "lib.moonloader"
 require "lib.sampfuncs"
 
-local plashka = {show = true,x = "10", y = "450"}
+
 local logo = renderCreateFont('BigNoodleTitlingCyr', 14, 4)
 local result
 local car = nil
@@ -12,6 +13,20 @@ local firstKLK = true
 local coordOn = true
 local autoSetKV = true
 local colorSheme = { firstColor = "{FF0000}", secondColor = "{ffffff}"}
+local configPath = "alphaTools.ini"
+
+
+local config = inicfg.load({
+	coordMenu = 
+	{
+		x = 10,
+		y = 450,
+		active = true
+	},
+	autokv = { 
+		active = true 
+		}
+	}, configPath)
 
 
 function events.onServerMessage(color, text)
@@ -22,7 +37,7 @@ function events.onServerMessage(color, text)
 end
 
 function addScriptMsg(str)
-	sampAddChatMessage("{4169E1}[ALPHA]: "..colorSheme.secondColor..str, 0xFFFFFF)
+	sampAddChatMessage("{4169E1}[ALPHA] "..colorSheme.secondColor..str, 0xFFFFFF)
 end
 
 function kvadrat()
@@ -233,9 +248,9 @@ function COORDTest()
 	local bool, waypointx, waypointy, waypointz = getTargetBlipCoordinates()
 
 	if (bool) then
-		renderFontDrawText(logo, "Направление: "..setColor(naprav).."\nКвадрат: " ..setColor(kvadrat()).."\nВысота: "..setColor(math.floor(pedz)).."\nМетка: "..setColor(math.floor(math.sqrt((waypointx-pedx)*(waypointx-pedx) + (waypointy-pedy)*(waypointy-pedy))*100)/100), plashka.x, plashka.y, 0xFFFFFFFF)
+		renderFontDrawText(logo, "Направление: "..setColor(naprav).."\nКвадрат: " ..setColor(kvadrat()).."\nВысота: "..setColor(math.floor(pedz)).."\nМетка: "..setColor(math.floor(math.sqrt((waypointx-pedx)*(waypointx-pedx) + (waypointy-pedy)*(waypointy-pedy))*100)/100), config.coordMenu.x, config.coordMenu.y, 0xFFFFFFFF)
 	else
-		renderFontDrawText(logo, "Направление: "..setColor(naprav).."\nКвадрат: " ..setColor(kvadrat()).."\nВысота: "..setColor(math.floor(pedz)), plashka.x, plashka.y, 0xFFFFFFFF)
+		renderFontDrawText(logo, "Направление: "..setColor(naprav).."\nКвадрат: " ..setColor(kvadrat()).."\nВысота: "..setColor(math.floor(pedz)), config.coordMenu.x, config.coordMenu.y, 0xFFFFFFFF)
 	end
 end
 
@@ -247,27 +262,6 @@ function doEveryTime()
 	COORDTest()
 end
 
-function loadSettings()
-	local file = io.open("moonloader\\config\\alphaTools.ini", "r")
-
-	if (file == nil) then
-		file = io.open("moonloader\\config\\alphaTools.ini", "w+")
-		file:write(plashka.x.." "..plashka.y)
-		file:close()
-	else
-		local xpos, ypos = string.match(file:read("*line"), "(%d+) (%d+)")
-		file:close()
-		if (xpos == nil or ypos == nil) then
-			addScriptMsg("Ошибка чтения файла. Файл перезаписан.")
-			file = io.open("moonloader\\config\\alphaTools.ini", "w+")
-			file:write(plashka.x.." "..plashka.y)
-			file:close()
-		else
-			plashka.x = xpos
-			plashka.y = ypos
-		end
-	end
-end
 
 function coordpos(args)
 	local xpos, ypos = string.match(args, "(%d+) (%d+)")
@@ -276,13 +270,12 @@ function coordpos(args)
 		addScriptMsg("Используйте /coordpos "..setColor("[x] [y]"))
 		return
 	end
-
-	plashka.x = xpos;
-	plashka.y = ypos;
-
-	local file = io.open("moonloader\\config\\alphaTools.ini", "w")
-	file:write(xpos.." "..ypos)
-	file:close()
+			
+	config.coordMenu.x = xpos;
+	config.coordMenu.y = ypos;
+	
+	inicfg.save(config, configPath)
+	
 end
 
 
@@ -290,8 +283,6 @@ function main()
 	if not isSampLoaded() or not isSampfuncsLoaded() then return end
 		while not isSampAvailable() do wait(100) end
 
-
-	loadSettings()
 
 	sampRegisterChatCommand("alphahelp", function()
 		sampShowDialog(6405, "AlphaTools",
@@ -316,14 +307,28 @@ function main()
 
 	sampRegisterChatCommand("coord", function()
 		coordOn = not coordOn
-		if coordOn then addScriptMsg("Меню координации включено.")
-		else addScriptMsg("Меню координации отключено.") end
+		if coordOn then 
+			addScriptMsg("Меню координации включено.")
+			config.coordMenu.active = true
+			inicfg.save(config, configPath)
+		else 
+			addScriptMsg("Меню координации отключено.")
+			config.coordMenu.active = false
+			inicfg.save(config, configPath)
+		end
 	end)
 
 	sampRegisterChatCommand("autokv", function()
 		autoSetKV = not autoSetKV
-		if autoSetKV then addScriptMsg("Автометка включена.")
-		else addScriptMsg("Автометка отключена.") end
+		if autoSetKV then 
+			addScriptMsg("Автометка включена.")
+			config.autokv.active = true
+			inicfg.save(config, configPath)
+		else 
+			addScriptMsg("Автометка отключена.") 
+			config.autokv.active = false
+			inicfg.save(config, configPath)
+			end
 	end)
 
 	addScriptMsg("AlphaTools загружен. Помощь: /alphahelp.")
