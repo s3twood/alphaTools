@@ -10,10 +10,9 @@ local car = nil
 local zad = false
 local stateKLK = false
 local firstKLK = true
-local coordOn = true
-local autoSetKV = true
-local colorSheme = { firstColor = "{FF0000}", secondColor = "{ffffff}"}
 local configPath = "alphaTools.ini"
+local callRecorderPath = "moonloader\\calls.txt"
+local activeCall = false
 
 
 local config = inicfg.load({
@@ -23,21 +22,58 @@ local config = inicfg.load({
 		y = 450,
 		active = true
 	},
-	autokv = { 
+	autokv = 
+	{ 
 		active = true 
-		}
-	}, configPath)
+	},
+	colorSheme = 
+	{ 
+		firstColor = "{FF0000}", 
+		secondColor = "{FFFFFF}"
+	},
+	callRecorder = 
+	{
+		active = true
+	}
+	
+}, configPath)
 
 
 function events.onServerMessage(color, text)
-	if(color ~= 865730559) then return end
-
-	local kv1 = string.match(text, "Alpha, текущее местоположение (%W%-%d+)%.")
-	if (kv1 ~= nil and autoSetKV == true) then setMarkerKV(kv1) end
+	
+	if(config.autokv.active == true and color == 865730559) then 
+		local kv1 = string.match(text, "Alpha, текущее местоположение (%W%-%d+)%.")
+		if (kv1 ~= nil) then setMarkerKV(kv1) end
+	end
+	
+	if (config.autokv.active == true) then
+	
+		if (string.match(text,"%[Информация%]") and string.match(text, "Вы подняли трубку") and color == -1347440641) then
+			activeCall = true
+			file = io.open(callRecorderPath, "a")
+			file:write("["..os.date().."] START CALL\n")
+			file:close()
+		end
+		
+		if (string.match(text,"%[Информация%]") and string.match(text, "Звонок окончен! Время разговора") and color == -1347440641) then
+			activeCall = false
+			file = io.open(callRecorderPath, "a")
+			file:write("["..os.date().."] END CALL\n\n")
+			file:close()
+		end
+		
+		
+		if (activeCall and string.match(text, "%[Тел%]%:") and color == -1) then
+			file = io.open(callRecorderPath, "a")
+			file:write(string.sub(text,24).."\n")
+			file:close()
+		end
+	end
+	
 end
 
 function addScriptMsg(str)
-	sampAddChatMessage("{4169E1}[ALPHA] "..colorSheme.secondColor..str, 0xFFFFFF)
+	sampAddChatMessage("{4169E1}[ALPHA] "..config.colorSheme.secondColor..str, 0xFFFFFF)
 end
 
 function kvadrat()
@@ -226,13 +262,13 @@ function ZADTest()
 end
 
 function setColor(str)
-	return colorSheme.firstColor..str..colorSheme.secondColor
+	return config.colorSheme.firstColor..str..config.colorSheme.secondColor
 end
 
 
 
 function COORDTest()
-	if not coordOn then return end
+	if not config.coordMenu.active then return end
 
 	local naprav = ""
 	if getCharHeading(PLAYER_PED) >= 337.5 or getCharHeading(PLAYER_PED) <= 22.5 then naprav = "Северное" end
@@ -253,7 +289,6 @@ function COORDTest()
 		renderFontDrawText(logo, "Направление: "..setColor(naprav).."\nКвадрат: " ..setColor(kvadrat()).."\nВысота: "..setColor(math.floor(pedz)), config.coordMenu.x, config.coordMenu.y, 0xFFFFFFFF)
 	end
 end
-
 
 
 function doEveryTime()
@@ -282,7 +317,7 @@ end
 function main()
 	if not isSampLoaded() or not isSampfuncsLoaded() then return end
 		while not isSampAvailable() do wait(100) end
-
+	
 
 	sampRegisterChatCommand("alphahelp", function()
 		sampShowDialog(6405, "AlphaTools",
@@ -302,12 +337,13 @@ function main()
 		0)
 	end)
 
+	sampAddChatMessage("test",-1347440641)
 	sampRegisterChatCommand("setkv", setMarkerKV)
 	sampRegisterChatCommand("coordpos", coordpos)
 
 	sampRegisterChatCommand("coord", function()
-		coordOn = not coordOn
-		if coordOn then 
+		config.coordMenu.active = not config.coordMenu.active
+		if config.coordMenu.active then 
 			addScriptMsg("Меню координации включено.")
 			config.coordMenu.active = true
 			inicfg.save(config, configPath)
@@ -319,8 +355,8 @@ function main()
 	end)
 
 	sampRegisterChatCommand("autokv", function()
-		autoSetKV = not autoSetKV
-		if autoSetKV then 
+		config.autokv.active = not config.autokv.active
+		if config.autokv.active then 
 			addScriptMsg("Автометка включена.")
 			config.autokv.active = true
 			inicfg.save(config, configPath)
