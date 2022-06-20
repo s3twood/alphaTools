@@ -11,7 +11,7 @@ local zad = false
 local stateKLK = false
 local firstKLK = true
 local configPath = "alphaTools.ini"
-local callRecorderPath = "moonloader\\calls.txt"
+local callRecorderPath = "moonloader\\callRecord.txt"
 local activeCall = false
 
 
@@ -331,6 +331,8 @@ function main()
 {4169E1}KLK {ffffff}- как чит-код, останавливает Maverick в воздухе, если скорость меньше 2-ух.
 {4169E1}ZAD {ffffff}- как чит-код, фиксирует камеру за персонажем.
 {4169E1}BK {ffffff}- как чит-код, отправляет информацию о текущем местоположении в департамент.
+
+{4169E1}Call Recorder {ffffff}- сохраняет все ваши звонки в текстовый файл moonloader/callRecord.txt.
 ]],
 		"Закрыть",
 		"",
