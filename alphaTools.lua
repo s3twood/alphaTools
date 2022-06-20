@@ -34,6 +34,10 @@ local config = inicfg.load({
 	callRecorder = 
 	{
 		active = true
+	},
+	onlyCallMode = 
+	{
+		active = true
 	}
 	
 }, configPath)
@@ -41,32 +45,45 @@ local config = inicfg.load({
 
 function events.onServerMessage(color, text)
 	
-	if(config.autokv.active == true and color == 865730559) then 
+	if(config.autokv.active and color == 865730559) then 
 		local kv1 = string.match(text, "Alpha, текущее местоположение (%W%-%d+)%.")
 		if (kv1 ~= nil) then setMarkerKV(kv1) end
 	end
 	
-	if (config.autokv.active == true) then
 	
-		if (string.match(text,"%[Информация%]") and string.match(text, "Вы подняли трубку") and color == -1347440641) then
-			activeCall = true
+	if (string.match(text,"%[Информация%]") and string.match(text, "Вы подняли трубку") and color == -1347440641) then
+		activeCall = true
+		if (config.callRecorder.active) then
 			file = io.open(callRecorderPath, "a")
 			file:write("["..os.date().."] START CALL\n")
 			file:close()
 		end
-		
-		if (string.match(text,"%[Информация%]") and string.match(text, "Звонок окончен! Время разговора") and color == -1347440641) then
-			activeCall = false
+	end
+	
+	if (string.match(text,"%[Информация%]") and string.match(text, "Звонок окончен! Время разговора") and color == -1347440641) then
+		activeCall = false
+		if (config.callRecorder.active) then
 			file = io.open(callRecorderPath, "a")
 			file:write("["..os.date().."] END CALL\n\n")
 			file:close()
 		end
-		
-		
-		if (activeCall and string.match(text, "%[Тел%]%:") and color == -1) then
+	end
+	
+	
+	if (activeCall and string.match(text, "%[Тел%]%:") and color == -1) then
+		if (config.callRecorder.active) then
 			file = io.open(callRecorderPath, "a")
 			file:write(string.sub(text,24).."\n")
 			file:close()
+		end
+	end
+
+	
+	if (config.onlyCallMode.active and activeCall) then
+		if (string.match(text,"%[Информация%]") and string.match(text, "Вы подняли трубку") and color == -1347440641) or (string.match(text,"%[Информация%]") and string.match(text, "Звонок окончен! Время разговора") and color == -1347440641) or (string.match(text, "%[Тел%]%:") and color == -1) then
+			return true
+		else 
+			return false
 		end
 	end
 	
@@ -185,7 +202,7 @@ function setMarkerKV(arg)
 
 		local pedx, pedy, pedz = getCharCoordinates(PLAYER_PED)
 
-		if (placeWaypoint(coordx, coordy, pedz) == true) then
+		if (placeWaypoint(coordx, coordy, pedz)) then
 			local dist = math.floor(math.sqrt((coordx-pedx)*(coordx-pedx) + (coordy-pedy)*(coordy-pedy))*100)/100
 			addScriptMsg("Метка установлена в квадрат "..setColor(kvl.."-"..kvn)..". Расстояние: "..setColor(dist).." метров.")
 		else
@@ -204,7 +221,7 @@ function testCheats()
 		stateKLK = not stateKLK
 		firstKLK = true
 		if stateKLK then
-			if (KLKTest() == true) then
+			if (KLKTest()) then
 				addScriptMsg("KLK активирован.")
 			else
 				addScriptMsg("KLK не может быть активирован.")
@@ -236,12 +253,12 @@ function KLKTest()
 			if isCarEngineOn(veh) then
 				if getCarSpeed(veh) < 2 then
 					setCarForwardSpeed(veh, 0)
-					if (firstKLK == true) then
+					if (firstKLK) then
 						printStringNow('~y~Stayed', 1000)
 						firstKLK = false
 						return true
 					end
-				elseif firstKLK == true then
+				elseif firstKLK then
 					printStringNow('~y~'..string.sub(tostring(getCarSpeed(veh)),0,4), 1000)
 					return true
 				end
@@ -327,6 +344,7 @@ function main()
 {4169E1}/coord {ffffff}- включает/отключает меню координации.
 {4169E1}/coordpos [x] [y] {ffffff}- устанавливает позицию меню координации.
 {4169E1}/autokv {ffffff}- автоматическая установка метки при сообщении в департамент.
+{4169E1}/onlycall {ffffff}- при разговоре по телефону все остальные сообщения в чате не отображаются.
 
 {4169E1}KLK {ffffff}- как чит-код, останавливает Maverick в воздухе, если скорость меньше 2-ух.
 {4169E1}ZAD {ffffff}- как чит-код, фиксирует камеру за персонажем.
@@ -339,7 +357,6 @@ function main()
 		0)
 	end)
 
-	sampAddChatMessage("test",-1347440641)
 	sampRegisterChatCommand("setkv", setMarkerKV)
 	sampRegisterChatCommand("coordpos", coordpos)
 
@@ -352,6 +369,19 @@ function main()
 		else 
 			addScriptMsg("Меню координации отключено.")
 			config.coordMenu.active = false
+			inicfg.save(config, configPath)
+		end
+	end)
+	
+	sampRegisterChatCommand("onlycall", function()
+		config.onlyCallMode.active = not config.onlyCallMode.active
+		if config.onlyCallMode.active then 
+			addScriptMsg("Отображение только телефона при звонке включено.")
+			config.onlyCallMode.active = true
+			inicfg.save(config, configPath)
+		else
+			addScriptMsg("Отображение только телефона при звонке отключено.")
+			config.onlyCallMode.active = false
 			inicfg.save(config, configPath)
 		end
 	end)
