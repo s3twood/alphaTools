@@ -331,6 +331,7 @@ function COORDTest()
 		local findTime = contactTimer+searchTime-os.time()
 		local findTimeMin = math.floor(findTime/60)
 		local findTimeSec = findTime%60
+		if (findTimeSec < 10) then findTimeSec = "0"..findTimeSec end
 		renderString = renderString.."\nПоиски: "..setColor(findTimeMin..":"..findTimeSec)
 	end
 
