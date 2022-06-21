@@ -1,12 +1,15 @@
 local events = require 'lib.samp.events'
 local inicfg = require 'inicfg'
+local imgui = require 'imgui'
+local encoding = require 'encoding'
+
 require "lib.moonloader"
 require "lib.sampfuncs"
 
+encoding.default = 'CP1251'
+local u8 = encoding.UTF8
 
 local logo = renderCreateFont('BigNoodleTitlingCyr', 14, 4)
-local result
-local car = nil
 local zad = false
 local stateKLK = false
 local firstKLK = true
@@ -16,44 +19,51 @@ local activeCall = false
 local contactTimer = os.time()
 local goFind = false
 local searchTime = 900
-local inSearch = false
+local main_window_state = imgui.ImBool(false)
+local screenX, screenY = getScreenResolution()
 
 local config = inicfg.load({
-	coordMenu = 
+	coordMenu =
 	{
 		x = 10,
 		y = 450,
 		active = true
 	},
-	autokv = 
-	{ 
-		active = true 
-	},
-	colorSheme = 
-	{ 
-		firstColor = "{FF0000}", 
-		secondColor = "{FFFFFF}"
-	},
-	callRecorder = 
+	autokv =
 	{
 		active = true
 	},
-	onlyCallMode = 
+	colorSheme =
+	{
+		firstColor = "{FF0000}",
+		secondColor = "{FFFFFF}"
+	},
+	callRecorder =
+	{
+		active = true
+	},
+	onlyCallMode =
 	{
 		active = true
 	}
-	
+
 }, configPath)
 
+local coordActive = imgui.ImBool(config.coordMenu.active)
+local autokvActive = imgui.ImBool(config.autokv.active)
+local callRecorderActive = imgui.ImBool(config.callRecorder.active)
+local onlyCallModeActive = imgui.ImBool(config.onlyCallMode.active)
+local coordPosX = imgui.ImFloat(config.coordMenu.x)
+local coordPosY = imgui.ImFloat(config.coordMenu.y)
 
 function events.onServerMessage(color, text)
-	
-	if(config.autokv.active and color == 865730559) then 
+
+	if(config.autokv.active and color == 865730559) then
 		local kv1 = string.match(text, "Alpha, текущее местоположение (%W%-%d+)%.")
 		if (kv1 ~= nil) then setMarkerKV(kv1) end
 	end
-	
-	if(color == 865730559) then 
+
+	if(color == 865730559) then
 		local kv1 = string.match(text, "Alpha, визуальный контакт с нарушителем потерян в (%W%-%d+)%. Начинайте поиски.")
 		if (kv1 ~= nil) then
 			goFind = true
@@ -61,16 +71,16 @@ function events.onServerMessage(color, text)
 			contactTimer = os.time()
 		end
 	end
-	
-	if(color == 865730559) then 
+
+	if(color == 865730559) then
 		local kv1 = string.match(text, "Alpha, визуальный контакт с нарушителем получен в (%W%-%d+)%. Веду погоню.")
-		if (kv1 ~= nil) then 
+		if (kv1 ~= nil) then
 			goFind = false
 			setMarkerKV(kv1)
 		end
 	end
-	
-	
+
+
 	if (string.match(text,"%[Информация%]") and string.match(text, "Вы подняли трубку") and color == -1347440641) then
 		activeCall = true
 		if (config.callRecorder.active) then
@@ -79,7 +89,7 @@ function events.onServerMessage(color, text)
 			file:close()
 		end
 	end
-	
+
 	if (string.match(text,"%[Информация%]") and string.match(text, "Звонок окончен! Время разговора") and color == -1347440641) then
 		activeCall = false
 		if (config.callRecorder.active) then
@@ -88,8 +98,8 @@ function events.onServerMessage(color, text)
 			file:close()
 		end
 	end
-	
-	
+
+
 	if (activeCall and string.match(text, "%[Тел%]%:") and color == -1) then
 		if (config.callRecorder.active) then
 			file = io.open(callRecorderPath, "a")
@@ -98,15 +108,15 @@ function events.onServerMessage(color, text)
 		end
 	end
 
-	
+
 	if (config.onlyCallMode.active and activeCall) then
 		if (string.match(text,"%[Информация%]") and string.match(text, "Вы подняли трубку") and color == -1347440641) or (string.match(text,"%[Информация%]") and string.match(text, "Звонок окончен! Время разговора") and color == -1347440641) or (string.match(text, "%[Тел%]%:") and color == -1) then
 			return true
-		else 
+		else
 			return false
 		end
 	end
-	
+
 end
 
 function addScriptMsg(str)
@@ -263,8 +273,8 @@ function testCheats()
 	if testCheat('BK') then
 		sampSendChat("/d Alpha, текущее местоположение "..kvadrat()..".")
 	end
-	
-	
+
+
 
 end
 
@@ -307,38 +317,35 @@ end
 
 
 function COORDTest()
-	if not config.coordMenu.active then return end
+	if config.coordMenu.active then
 
-	local naprav = ""
-	if getCharHeading(PLAYER_PED) >= 337.5 or getCharHeading(PLAYER_PED) <= 22.5 then naprav = "Северное" end
-       if getCharHeading(PLAYER_PED) > 22.5 and getCharHeading(PLAYER_PED) <= 67.5 then naprav = "Северо-западное" end
-       if getCharHeading(PLAYER_PED) > 67.5 and getCharHeading(PLAYER_PED) <= 112.5 then naprav = "Западное" end
-       if getCharHeading(PLAYER_PED) > 112.5 and getCharHeading(PLAYER_PED) <= 157.5 then naprav = "Юго-западное" end
-       if getCharHeading(PLAYER_PED) > 157.5 and getCharHeading(PLAYER_PED) <= 202.5 then naprav = "Южное" end
-       if getCharHeading(PLAYER_PED) > 202.5 and getCharHeading(PLAYER_PED) <= 247.5 then naprav = "Юго-восточное" end
-       if getCharHeading(PLAYER_PED) > 247.5 and getCharHeading(PLAYER_PED) <= 292.5 then naprav = "Восточное" end
-       if getCharHeading(PLAYER_PED) > 292.5 and getCharHeading(PLAYER_PED) <= 337.5 then naprav = "Северо-восточное" end
+		local naprav = ""
+		local charHeading = getCharHeading(PLAYER_PED)
 
-	local pedx, pedy, pedz = getCharCoordinates(PLAYER_PED)
-	local bool, waypointx, waypointy, waypointz = getTargetBlipCoordinates()
-	
-	
-	
+		if charHeading >= 337.5 or  charHeading <= 22.5  then naprav = "Северное" end
+		if charHeading >  22.5  and charHeading <= 67.5  then naprav = "Северо-западное" end
+		if charHeading >  67.5  and charHeading <= 112.5 then naprav = "Западное" end
+		if charHeading >  112.5 and charHeading <= 157.5 then naprav = "Юго-западное" end
+		if charHeading >  157.5 and charHeading <= 202.5 then naprav = "Южное" end
+		if charHeading >  202.5 and charHeading <= 247.5 then naprav = "Юго-восточное" end
+		if charHeading >  247.5 and charHeading <= 292.5 then naprav = "Восточное" end
+		if charHeading >  292.5 and charHeading <= 337.5 then naprav = "Северо-восточное" end
 
-	local renderString = "Направление: "..setColor(naprav).."\nКвадрат: " ..setColor(kvadrat()).."\nВысота: "..setColor(math.floor(pedz))
-	if (bool) then renderString = renderString.."\nМетка: "..setColor(math.floor(math.sqrt((waypointx-pedx)*(waypointx-pedx) + (waypointy-pedy)*(waypointy-pedy))*100)/100) end
-	if (goFind) then
-		local findTime = contactTimer+searchTime-os.time()
-		local findTimeMin = math.floor(findTime/60)
-		local findTimeSec = findTime%60
-		if (findTimeSec < 10) then findTimeSec = "0"..findTimeSec end
-		renderString = renderString.."\nПоиски: "..setColor(findTimeMin..":"..findTimeSec)
+		local pedx, pedy, pedz = getCharCoordinates(PLAYER_PED)
+		local bool, waypointx, waypointy = getTargetBlipCoordinates()
+
+		local renderString = "Направление: "..setColor(naprav).."\nКвадрат: " ..setColor(kvadrat()).."\nВысота: "..setColor(math.floor(pedz))
+		if (bool) then renderString = renderString.."\nМетка: "..setColor(math.floor(math.sqrt((waypointx-pedx)*(waypointx-pedx) + (waypointy-pedy)*(waypointy-pedy))*100)/100) end
+		if (goFind) then
+			local findTime = contactTimer+searchTime-os.time()
+			local findTimeMin = math.floor(findTime/60)
+			local findTimeSec = findTime%60
+			if (findTimeSec < 10) then findTimeSec = "0"..findTimeSec end
+			renderString = renderString.."\nПоиски: "..setColor(findTimeMin..":"..findTimeSec)
+		end
+
+		renderFontDrawText(logo, renderString, config.coordMenu.x, config.coordMenu.y, 0xFFFFFFFF)
 	end
-
-	
-	renderFontDrawText(logo, renderString, config.coordMenu.x, config.coordMenu.y, 0xFFFFFFFF)
-	
-	
 end
 
 function findTest()
@@ -348,43 +355,83 @@ function findTest()
 	end
 end
 
+function keyPressTest()
+	
+end
+
 function doEveryTime()
 	KLKTest()
 	ZADTest()
 	COORDTest()
 	findTest()
+	keyPressTest()
 end
 
+function imgui.OnDrawFrame()
+	if main_window_state.v then
+		imgui.ShowCursor = true
+		imgui.SetNextWindowSize(imgui.ImVec2(600, 200), imgui.Cond.FirstUseEver)
 
-function coordpos(args)
-	local xpos, ypos = string.match(args, "(%d+) (%d+)")
+		imgui.Begin(u8'Настройки', main_window_state)
 
-	if (xpos == nil or ypos == nil) then
-		addScriptMsg("Используйте /coordpos "..setColor("[x] [y]"))
-		return
+		if imgui.Checkbox(u8'Меню координации', coordActive) then
+			config.coordMenu.active = coordActive.v
+			if config.coordMenu.active then addScriptMsg("Меню координации включено.")
+			else addScriptMsg("Меню координации отключено.") end
+
+			inicfg.save(config, configPath)
+		end
+
+		if imgui.SliderFloat(u8"Позиция по горизонтали", coordPosX, 0, screenX) then
+			config.coordMenu.x = coordPosX.v
+			inicfg.save(config, configPath)
+		end
+
+		if imgui.SliderFloat(u8"Позиция по вертикали", coordPosY, 0, screenY) then
+			config.coordMenu.y = coordPosY.v
+			inicfg.save(config, configPath)
+		end
+
+		if imgui.Checkbox(u8'Автометка', autokvActive) then
+			config.autokv.active = autokvActive.v
+			if config.autokv.active then addScriptMsg("Автометка включена.")
+			else addScriptMsg("Автометка отключена.") end
+
+			inicfg.save(config, configPath)
+		end
+
+		if imgui.Checkbox(u8'Запись звонков', callRecorderActive) then
+			config.callRecorder.active = callRecorderActive.v
+			if config.callRecorder.active then addScriptMsg("Сохранение звонков включено.") 
+			else addScriptMsg("Сохранение звонков отключено.") end
+
+			inicfg.save(config, configPath)
+		end
+
+		if imgui.Checkbox(u8'Режим "только звонок"', onlyCallModeActive) then
+			config.onlyCallMode.active = onlyCallModeActive.v
+			if config.onlyCallMode.active then addScriptMsg("Отображение только телефона при звонке включено.")
+			else addScriptMsg("Отображение только телефона при звонке отключено.") end
+
+			inicfg.save(config, configPath)
+		end
+		imgui.End()
+	else
+		imgui.ShowCursor = false
 	end
-			
-	config.coordMenu.x = xpos;
-	config.coordMenu.y = ypos;
-	
-	inicfg.save(config, configPath)
-	
 end
 
 function main()
 	if not isSampLoaded() or not isSampfuncsLoaded() then return end
 		while not isSampAvailable() do wait(100) end
-	
-	
+
+
 	sampRegisterChatCommand("alphahelp", function()
 		sampShowDialog(6405, "AlphaTools",
 		[[
 {4169E1}/alphahelp {ffffff}- функции скрипта.
+{4169E1}/alphasettings {ffffff}- настройки скрипта.
 {4169E1}/setkv [квадрат] {ffffff}- устанавливает метку в выбранный квадрат.
-{4169E1}/coord {ffffff}- включает/отключает меню координации.
-{4169E1}/coordpos [x] [y] {ffffff}- устанавливает позицию меню координации.
-{4169E1}/autokv {ffffff}- автоматическая установка метки при сообщении в департамент.
-{4169E1}/onlycall {ffffff}- при разговоре по телефону все остальные сообщения в чате не отображаются.
 {4169E1}/fc {ffffff}- получен визуальный контакт с бандитами. Убирает таймер погони.
 {4169E1}/lc {ffffff}- потерян визуальный контакт с бандитами. Запускается таймер погони.
 
@@ -392,7 +439,10 @@ function main()
 {4169E1}ZAD {ffffff}- как чит-код, фиксирует камеру за персонажем.
 {4169E1}BK {ffffff}- как чит-код, отправляет информацию о текущем местоположении в департамент.
 
-{4169E1}Call Recorder {ffffff}- сохраняет все ваши звонки в текстовый файл moonloader/callRecord.txt.
+{4169E1}Меню координации {ffffff}- указывает ваше направление, квадрат, высоту, расстояние до метки, таймер поимки.
+{4169E1}Автометка {ffffff}- автоматическая установка метки при сообщении в департамент.
+{4169E1}Запись звонков {ffffff}- сохраняет все ваши звонки в текстовый файл moonloader/callRecord.txt.
+{4169E1}Режим "только звонок" {ffffff}- при разговоре по телефону все остальные сообщения в чате не отображаются.
 ]],
 		"Закрыть",
 		"",
@@ -402,60 +452,26 @@ function main()
 	sampRegisterChatCommand("setkv", setMarkerKV)
 	sampRegisterChatCommand("coordpos", coordpos)
 
-	sampRegisterChatCommand("coord", function()
-		config.coordMenu.active = not config.coordMenu.active
-		if config.coordMenu.active then 
-			addScriptMsg("Меню координации включено.")
-			config.coordMenu.active = true
-			inicfg.save(config, configPath)
-		else 
-			addScriptMsg("Меню координации отключено.")
-			config.coordMenu.active = false
-			inicfg.save(config, configPath)
-		end
-	end)
-	
-	sampRegisterChatCommand("onlycall", function()
-		config.onlyCallMode.active = not config.onlyCallMode.active
-		if config.onlyCallMode.active then 
-			addScriptMsg("Отображение только телефона при звонке включено.")
-			config.onlyCallMode.active = true
-			inicfg.save(config, configPath)
-		else
-			addScriptMsg("Отображение только телефона при звонке отключено.")
-			config.onlyCallMode.active = false
-			inicfg.save(config, configPath)
-		end
-	end)
 
-	sampRegisterChatCommand("autokv", function()
-		config.autokv.active = not config.autokv.active
-		if config.autokv.active then 
-			addScriptMsg("Автометка включена.")
-			config.autokv.active = true
-			inicfg.save(config, configPath)
-		else 
-			addScriptMsg("Автометка отключена.") 
-			config.autokv.active = false
-			inicfg.save(config, configPath)
-			end
-	end)
-	
 	sampRegisterChatCommand("fc", function()
 			addScriptMsg("Визуальный контакт получен.")
 			sampSendChat("/d Alpha, визуальный контакт с нарушителем получен в "..kvadrat()..". Веду погоню.")
-			
+
 	end)
 		sampRegisterChatCommand("lc", function()
-			if (goFind) then 
+			if (goFind) then
 				addScriptMsg("В данный момент и так ведутся поиски.")
 			else
 				addScriptMsg("Визуальный контакт потерян.")
 				sampSendChat("/d Alpha, визуальный контакт с нарушителем потерян в "..kvadrat()..". Начинайте поиски.")
 			end
 	end)
-	
-	
+
+		sampRegisterChatCommand("alphasettings", function()
+			  main_window_state.v = not main_window_state.v
+			  imgui.Process = main_window_state.v
+	end)
+
 
 	addScriptMsg("AlphaTools загружен. Помощь: /alphahelp.")
 
