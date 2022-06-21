@@ -450,9 +450,7 @@ function main()
 	end)
 
 	sampRegisterChatCommand("setkv", setMarkerKV)
-	sampRegisterChatCommand("coordpos", coordpos)
-
-
+	
 	sampRegisterChatCommand("fc", function()
 			addScriptMsg("Визуальный контакт получен.")
 			sampSendChat("/d Alpha, визуальный контакт с нарушителем получен в "..kvadrat()..". Веду погоню.")
