@@ -1,11 +1,11 @@
-script_name("alphaTools")
-script_author("Foxy_L")
-script_version("25.06.2022")
-
 local events = require 'lib.samp.events'
 local inicfg = require 'inicfg'
 local imgui = require 'imgui'
 local encoding = require 'encoding'
+
+script_name("alphaTools")
+script_author("Foxy_L")
+script_version("25.06.2022")
 
 require "lib.moonloader"
 require "lib.sampfuncs"
