@@ -63,12 +63,12 @@ local coordPosY = imgui.ImFloat(config.coordMenu.y)
 function events.onServerMessage(color, text)
 
 	if(config.autokv.active and color == 865730559) then
-		local kv1 = string.match(text, "Alpha, Ñ‚ĞµĞºÑƒÑ‰ĞµĞµ Ğ¼ĞµÑÑ‚Ğ¾Ğ¿Ğ¾Ğ»Ğ¾Ğ¶ĞµĞ½Ğ¸Ğµ (%W%-%d+)%.")
+		local kv1 = string.match(text, "Alpha, òåêóùåå ìåñòîïîëîæåíèå (%W%-%d+)%.")
 		if (kv1 ~= nil) then setMarkerKV(kv1) end
 	end
 
 	if(color == 865730559) then
-		local kv1 = string.match(text, "Alpha, Ğ²Ğ¸Ğ·ÑƒĞ°Ğ»ÑŒĞ½Ñ‹Ğ¹ ĞºĞ¾Ğ½Ñ‚Ğ°ĞºÑ‚ Ñ Ğ½Ğ°Ñ€ÑƒÑˆĞ¸Ñ‚ĞµĞ»ĞµĞ¼ Ğ¿Ğ¾Ñ‚ĞµÑ€ÑĞ½ Ğ² (%W%-%d+)%. ĞĞ°Ñ‡Ğ¸Ğ½Ğ°Ğ¹Ñ‚Ğµ Ğ¿Ğ¾Ğ¸ÑĞºĞ¸.")
+		local kv1 = string.match(text, "Alpha, âèçóàëüíûé êîíòàêò ñ íàğóøèòåëåì ïîòåğÿí â (%W%-%d+)%. Íà÷èíàéòå ïîèñêè.")
 		if (kv1 ~= nil) then
 			goFind = true
 			setMarkerKV(kv1)
@@ -77,7 +77,7 @@ function events.onServerMessage(color, text)
 	end
 
 	if(color == 865730559) then
-		local kv1 = string.match(text, "Alpha, Ğ²Ğ¸Ğ·ÑƒĞ°Ğ»ÑŒĞ½Ñ‹Ğ¹ ĞºĞ¾Ğ½Ñ‚Ğ°ĞºÑ‚ Ñ Ğ½Ğ°Ñ€ÑƒÑˆĞ¸Ñ‚ĞµĞ»ĞµĞ¼ Ğ¿Ğ¾Ğ»ÑƒÑ‡ĞµĞ½ Ğ² (%W%-%d+)%. Ğ’ĞµĞ´Ñƒ Ğ¿Ğ¾Ğ³Ğ¾Ğ½Ñ.")
+		local kv1 = string.match(text, "Alpha, âèçóàëüíûé êîíòàêò ñ íàğóøèòåëåì ïîëó÷åí â (%W%-%d+)%. Âåäó ïîãîíş.")
 		if (kv1 ~= nil) then
 			goFind = false
 			setMarkerKV(kv1)
@@ -85,7 +85,7 @@ function events.onServerMessage(color, text)
 	end
 
 
-	if (string.match(text,"%[Ğ˜Ğ½Ñ„Ğ¾Ñ€Ğ¼Ğ°Ñ†Ğ¸Ñ%]") and string.match(text, "Ğ’Ñ‹ Ğ¿Ğ¾Ğ´Ğ½ÑĞ»Ğ¸ Ñ‚Ñ€ÑƒĞ±ĞºÑƒ") and color == -1347440641) then
+	if (string.match(text,"%[Èíôîğìàöèÿ%]") and string.match(text, "Âû ïîäíÿëè òğóáêó") and color == -1347440641) then
 		activeCall = true
 		if (config.callRecorder.active) then
 			file = io.open(callRecorderPath, "a")
@@ -94,7 +94,7 @@ function events.onServerMessage(color, text)
 		end
 	end
 
-	if (string.match(text,"%[Ğ˜Ğ½Ñ„Ğ¾Ñ€Ğ¼Ğ°Ñ†Ğ¸Ñ%]") and string.match(text, "Ğ—Ğ²Ğ¾Ğ½Ğ¾Ğº Ğ¾ĞºĞ¾Ğ½Ñ‡ĞµĞ½! Ğ’Ñ€ĞµĞ¼Ñ Ñ€Ğ°Ğ·Ğ³Ğ¾Ğ²Ğ¾Ñ€Ğ°") and color == -1347440641) then
+	if (string.match(text,"%[Èíôîğìàöèÿ%]") and string.match(text, "Çâîíîê îêîí÷åí! Âğåìÿ ğàçãîâîğà") and color == -1347440641) then
 		activeCall = false
 		if (config.callRecorder.active) then
 			file = io.open(callRecorderPath, "a")
@@ -104,7 +104,7 @@ function events.onServerMessage(color, text)
 	end
 
 
-	if (activeCall and string.match(text, "%[Ğ¢ĞµĞ»%]%:") and color == -1) then
+	if (activeCall and string.match(text, "%[Òåë%]%:") and color == -1) then
 		if (config.callRecorder.active) then
 			file = io.open(callRecorderPath, "a")
 			file:write(string.sub(text,24).."\n")
@@ -114,7 +114,7 @@ function events.onServerMessage(color, text)
 
 
 	if (config.onlyCallMode.active and activeCall) then
-		if (string.match(text,"%[Ğ˜Ğ½Ñ„Ğ¾Ñ€Ğ¼Ğ°Ñ†Ğ¸Ñ%]") and string.match(text, "Ğ’Ñ‹ Ğ¿Ğ¾Ğ´Ğ½ÑĞ»Ğ¸ Ñ‚Ñ€ÑƒĞ±ĞºÑƒ") and color == -1347440641) or (string.match(text,"%[Ğ˜Ğ½Ñ„Ğ¾Ñ€Ğ¼Ğ°Ñ†Ğ¸Ñ%]") and string.match(text, "Ğ—Ğ²Ğ¾Ğ½Ğ¾Ğº Ğ¾ĞºĞ¾Ğ½Ñ‡ĞµĞ½! Ğ’Ñ€ĞµĞ¼Ñ Ñ€Ğ°Ğ·Ğ³Ğ¾Ğ²Ğ¾Ñ€Ğ°") and color == -1347440641) or (string.match(text, "%[Ğ¢ĞµĞ»%]%:") and color == -1) then
+		if (string.match(text,"%[Èíôîğìàöèÿ%]") and string.match(text, "Âû ïîäíÿëè òğóáêó") and color == -1347440641) or (string.match(text,"%[Èíôîğìàöèÿ%]") and string.match(text, "Çâîíîê îêîí÷åí! Âğåìÿ ğàçãîâîğà") and color == -1347440641) or (string.match(text, "%[Òåë%]%:") and color == -1) then
 			return true
 		else
 			return false
@@ -129,30 +129,30 @@ end
 
 function kvadrat()
 	local KV = {
-        [1] = "Ğ",
-        [2] = "Ğ‘",
-        [3] = "Ğ’",
-        [4] = "Ğ“",
-        [5] = "Ğ”",
-        [6] = "Ğ–",
-        [7] = "Ğ—",
-        [8] = "Ğ˜",
-        [9] = "Ğš",
-        [10] = "Ğ›",
-        [11] = "Ğœ",
-        [12] = "Ğ",
-        [13] = "Ğ",
-        [14] = "ĞŸ",
-        [15] = "Ğ ",
-        [16] = "Ğ¡",
-        [17] = "Ğ¢",
-        [18] = "Ğ£",
-        [19] = "Ğ¤",
-        [20] = "Ğ¥",
-        [21] = "Ğ¦",
-        [22] = "Ğ§",
-        [23] = "Ğ¨",
-        [24] = "Ğ¯",
+        [1] = "À",
+        [2] = "Á",
+        [3] = "Â",
+        [4] = "Ã",
+        [5] = "Ä",
+        [6] = "Æ",
+        [7] = "Ç",
+        [8] = "È",
+        [9] = "Ê",
+        [10] = "Ë",
+        [11] = "Ì",
+        [12] = "Í",
+        [13] = "Î",
+        [14] = "Ï",
+        [15] = "Ğ",
+        [16] = "Ñ",
+        [17] = "Ò",
+        [18] = "Ó",
+        [19] = "Ô",
+        [20] = "Õ",
+        [21] = "Ö",
+        [22] = "×",
+        [23] = "Ø",
+        [24] = "ß",
     }
 
     local X, Y, Z = getCharCoordinates(PLAYER_PED)
@@ -166,54 +166,54 @@ end
 
 function kvadratnum(param)
   local KV = {
-    ["Ğ"] = 1,
-    ["Ğ‘"] = 2,
-    ["Ğ’"] = 3,
-    ["Ğ“"] = 4,
-    ["Ğ”"] = 5,
-    ["Ğ–"] = 6,
-    ["Ğ—"] = 7,
-    ["Ğ˜"] = 8,
-    ["Ğš"] = 9,
-    ["Ğ›"] = 10,
-    ["Ğœ"] = 11,
-    ["Ğ"] = 12,
-    ["Ğ"] = 13,
-    ["ĞŸ"] = 14,
-    ["Ğ "] = 15,
-    ["Ğ¡"] = 16,
-    ["Ğ¢"] = 17,
-    ["Ğ£"] = 18,
-    ["Ğ¤"] = 19,
-    ["Ğ¥"] = 20,
-    ["Ğ¦"] = 21,
-    ["Ğ§"] = 22,
-    ["Ğ¨"] = 23,
-    ["Ğ¯"] = 24,
-    ["Ğ°"] = 1,
-    ["Ğ±"] = 2,
-    ["Ğ²"] = 3,
-    ["Ğ³"] = 4,
-    ["Ğ´"] = 5,
-    ["Ğ¶"] = 6,
-    ["Ğ·"] = 7,
-    ["Ğ¸"] = 8,
-    ["Ğº"] = 9,
-    ["Ğ»"] = 10,
-    ["Ğ¼"] = 11,
-    ["Ğ½"] = 12,
-    ["Ğ¾"] = 13,
-    ["Ğ¿"] = 14,
-    ["Ñ€"] = 15,
-    ["Ñ"] = 16,
-    ["Ñ‚"] = 17,
-    ["Ñƒ"] = 18,
-    ["Ñ„"] = 19,
-    ["Ñ…"] = 20,
-    ["Ñ†"] = 21,
-    ["Ñ‡"] = 22,
-    ["Ñˆ"] = 23,
-    ["Ñ"] = 24,
+    ["À"] = 1,
+    ["Á"] = 2,
+    ["Â"] = 3,
+    ["Ã"] = 4,
+    ["Ä"] = 5,
+    ["Æ"] = 6,
+    ["Ç"] = 7,
+    ["È"] = 8,
+    ["Ê"] = 9,
+    ["Ë"] = 10,
+    ["Ì"] = 11,
+    ["Í"] = 12,
+    ["Î"] = 13,
+    ["Ï"] = 14,
+    ["Ğ"] = 15,
+    ["Ñ"] = 16,
+    ["Ò"] = 17,
+    ["Ó"] = 18,
+    ["Ô"] = 19,
+    ["Õ"] = 20,
+    ["Ö"] = 21,
+    ["×"] = 22,
+    ["Ø"] = 23,
+    ["ß"] = 24,
+    ["à"] = 1,
+    ["á"] = 2,
+    ["â"] = 3,
+    ["ã"] = 4,
+    ["ä"] = 5,
+    ["æ"] = 6,
+    ["ç"] = 7,
+    ["è"] = 8,
+    ["ê"] = 9,
+    ["ë"] = 10,
+    ["ì"] = 11,
+    ["í"] = 12,
+    ["î"] = 13,
+    ["ï"] = 14,
+    ["ğ"] = 15,
+    ["ñ"] = 16,
+    ["ò"] = 17,
+    ["ó"] = 18,
+    ["ô"] = 19,
+    ["õ"] = 20,
+    ["ö"] = 21,
+    ["÷"] = 22,
+    ["ø"] = 23,
+    ["ÿ"] = 24,
   }
   return KV[param]
 end
@@ -226,7 +226,7 @@ function setMarkerKV(arg)
 	end
 
 	if (kvl == nil or kvn == nil) then
-		addScriptMsg("Ğ˜ÑĞ¿Ğ¾Ğ»ÑŒĞ·ÑƒĞ¹Ñ‚Ğµ /setkv "..setColor("[ĞºĞ²Ğ°Ğ´Ñ€Ğ°Ñ‚]")..". ĞŸÑ€Ğ¸Ğ¼ĞµÑ€: /setkv "..setColor("Ğ-1"))
+		addScriptMsg("Èñïîëüçóéòå /setkv "..setColor("[êâàäğàò]")..". Ïğèìåğ: /setkv "..setColor("À-1"))
 		return
 	end
 
@@ -238,13 +238,13 @@ function setMarkerKV(arg)
 
 		if (placeWaypoint(coordx, coordy, pedz)) then
 			local dist = math.floor(math.sqrt((coordx-pedx)*(coordx-pedx) + (coordy-pedy)*(coordy-pedy))*100)/100
-			addScriptMsg("ĞœĞµÑ‚ĞºĞ° ÑƒÑÑ‚Ğ°Ğ½Ğ¾Ğ²Ğ»ĞµĞ½Ğ° Ğ² ĞºĞ²Ğ°Ğ´Ñ€Ğ°Ñ‚ "..setColor(kvl.."-"..kvn)..". Ğ Ğ°ÑÑÑ‚Ğ¾ÑĞ½Ğ¸Ğµ: "..setColor(dist).." Ğ¼ĞµÑ‚Ñ€Ğ¾Ğ².")
+			addScriptMsg("Ìåòêà óñòàíîâëåíà â êâàäğàò "..setColor(kvl.."-"..kvn)..". Ğàññòîÿíèå: "..setColor(dist).." ìåòğîâ.")
 		else
-			addScriptMsg("ĞĞµĞ¸Ğ·Ğ²ĞµÑÑ‚Ğ½Ğ°Ñ Ğ¾ÑˆĞ¸Ğ±ĞºĞ°.")
+			addScriptMsg("Íåèçâåñòíàÿ îøèáêà.")
 		end
 
 	else
-		addScriptMsg("Ğ¢Ğ°ĞºĞ¾Ğ³Ğ¾ ĞºĞ²Ğ°Ğ´Ñ€Ğ°Ñ‚Ğ° Ğ½Ğµ ÑÑƒÑ‰ĞµÑÑ‚Ğ²ÑƒĞµÑ‚.")
+		addScriptMsg("Òàêîãî êâàäğàòà íå ñóùåñòâóåò.")
 	end
 
 
@@ -256,26 +256,26 @@ function testCheats()
 		firstKLK = true
 		if stateKLK then
 			if (KLKTest()) then
-				addScriptMsg("KLK Ğ°ĞºÑ‚Ğ¸Ğ²Ğ¸Ñ€Ğ¾Ğ²Ğ°Ğ½.")
+				addScriptMsg("KLK àêòèâèğîâàí.")
 			else
-				addScriptMsg("KLK Ğ½Ğµ Ğ¼Ğ¾Ğ¶ĞµÑ‚ Ğ±Ñ‹Ñ‚ÑŒ Ğ°ĞºÑ‚Ğ¸Ğ²Ğ¸Ñ€Ğ¾Ğ²Ğ°Ğ½.")
+				addScriptMsg("KLK íå ìîæåò áûòü àêòèâèğîâàí.")
 			end
 		else
-			addScriptMsg("KLK Ğ¾Ñ‚ĞºĞ»ÑÑ‡ĞµĞ½.")
+			addScriptMsg("KLK îòêëş÷åí.")
 		end
 	end
 
 	if testCheat('ZAD') then
 		zad = not zad
 		if zad then
-			addScriptMsg("ZAD Ğ°ĞºÑ‚Ğ¸Ğ²Ğ¸Ñ€Ğ¾Ğ²Ğ°Ğ½.")
+			addScriptMsg("ZAD àêòèâèğîâàí.")
 		else
-			addScriptMsg("ZAD Ğ¾Ñ‚ĞºĞ»ÑÑ‡ĞµĞ½.")
+			addScriptMsg("ZAD îòêëş÷åí.")
 		end
 	end
 
 	if testCheat('BK') then
-		sampSendChat("/d Alpha, Ñ‚ĞµĞºÑƒÑ‰ĞµĞµ Ğ¼ĞµÑÑ‚Ğ¾Ğ¿Ğ¾Ğ»Ğ¾Ğ¶ĞµĞ½Ğ¸Ğµ "..kvadrat()..".")
+		sampSendChat("/d Alpha, òåêóùåå ìåñòîïîëîæåíèå "..kvadrat()..".")
 	end
 
 
@@ -326,26 +326,26 @@ function COORDTest()
 		local naprav = ""
 		local charHeading = getCharHeading(PLAYER_PED)
 
-		if charHeading >= 337.5 or  charHeading <= 22.5  then naprav = "Ğ¡ĞµĞ²ĞµÑ€Ğ½Ğ¾Ğµ" end
-		if charHeading >  22.5  and charHeading <= 67.5  then naprav = "Ğ¡ĞµĞ²ĞµÑ€Ğ¾-Ğ·Ğ°Ğ¿Ğ°Ğ´Ğ½Ğ¾Ğµ" end
-		if charHeading >  67.5  and charHeading <= 112.5 then naprav = "Ğ—Ğ°Ğ¿Ğ°Ğ´Ğ½Ğ¾Ğµ" end
-		if charHeading >  112.5 and charHeading <= 157.5 then naprav = "Ğ®Ğ³Ğ¾-Ğ·Ğ°Ğ¿Ğ°Ğ´Ğ½Ğ¾Ğµ" end
-		if charHeading >  157.5 and charHeading <= 202.5 then naprav = "Ğ®Ğ¶Ğ½Ğ¾Ğµ" end
-		if charHeading >  202.5 and charHeading <= 247.5 then naprav = "Ğ®Ğ³Ğ¾-Ğ²Ğ¾ÑÑ‚Ğ¾Ñ‡Ğ½Ğ¾Ğµ" end
-		if charHeading >  247.5 and charHeading <= 292.5 then naprav = "Ğ’Ğ¾ÑÑ‚Ğ¾Ñ‡Ğ½Ğ¾Ğµ" end
-		if charHeading >  292.5 and charHeading <= 337.5 then naprav = "Ğ¡ĞµĞ²ĞµÑ€Ğ¾-Ğ²Ğ¾ÑÑ‚Ğ¾Ñ‡Ğ½Ğ¾Ğµ" end
+		if charHeading >= 337.5 or  charHeading <= 22.5  then naprav = "Ñåâåğíîå" end
+		if charHeading >  22.5  and charHeading <= 67.5  then naprav = "Ñåâåğî-çàïàäíîå" end
+		if charHeading >  67.5  and charHeading <= 112.5 then naprav = "Çàïàäíîå" end
+		if charHeading >  112.5 and charHeading <= 157.5 then naprav = "Şãî-çàïàäíîå" end
+		if charHeading >  157.5 and charHeading <= 202.5 then naprav = "Şæíîå" end
+		if charHeading >  202.5 and charHeading <= 247.5 then naprav = "Şãî-âîñòî÷íîå" end
+		if charHeading >  247.5 and charHeading <= 292.5 then naprav = "Âîñòî÷íîå" end
+		if charHeading >  292.5 and charHeading <= 337.5 then naprav = "Ñåâåğî-âîñòî÷íîå" end
 
 		local pedx, pedy, pedz = getCharCoordinates(PLAYER_PED)
 		local bool, waypointx, waypointy = getTargetBlipCoordinates()
 
-		local renderString = "ĞĞ°Ğ¿Ñ€Ğ°Ğ²Ğ»ĞµĞ½Ğ¸Ğµ: "..setColor(naprav).."\nĞšĞ²Ğ°Ğ´Ñ€Ğ°Ñ‚: " ..setColor(kvadrat()).."\nĞ’Ñ‹ÑĞ¾Ñ‚Ğ°: "..setColor(math.floor(pedz))
-		if (bool) then renderString = renderString.."\nĞœĞµÑ‚ĞºĞ°: "..setColor(math.floor(math.sqrt((waypointx-pedx)*(waypointx-pedx) + (waypointy-pedy)*(waypointy-pedy))*100)/100) end
+		local renderString = "Íàïğàâëåíèå: "..setColor(naprav).."\nÊâàäğàò: " ..setColor(kvadrat()).."\nÂûñîòà: "..setColor(math.floor(pedz))
+		if (bool) then renderString = renderString.."\nÌåòêà: "..setColor(math.floor(math.sqrt((waypointx-pedx)*(waypointx-pedx) + (waypointy-pedy)*(waypointy-pedy))*100)/100) end
 		if (goFind) then
 			local findTime = contactTimer+searchTime-os.time()
 			local findTimeMin = math.floor(findTime/60)
 			local findTimeSec = findTime%60
 			if (findTimeSec < 10) then findTimeSec = "0"..findTimeSec end
-			renderString = renderString.."\nĞŸĞ¾Ğ¸ÑĞºĞ¸: "..setColor(findTimeMin..":"..findTimeSec)
+			renderString = renderString.."\nÏîèñêè: "..setColor(findTimeMin..":"..findTimeSec)
 		end
 
 		renderFontDrawText(logo, renderString, config.coordMenu.x, config.coordMenu.y, 0xFFFFFFFF)
@@ -355,7 +355,7 @@ end
 function findTest()
 	if (goFind and contactTimer+searchTime-os.time() < 1) then
 		goFind = false
-		addScriptMsg("Ğ‘Ğ°Ğ½Ğ´Ğ¸Ñ‚Ñ‹ Ğ¿Ğ¾Ñ‚ĞµÑ€ÑĞ½Ñ‹. ĞŸĞ¾Ğ³Ğ¾Ğ½Ñ Ğ½Ğµ Ğ²ĞµĞ´Ñ‘Ñ‚ÑÑ.")
+		addScriptMsg("Áàíäèòû ïîòåğÿíû. Ïîãîíÿ íå âåä¸òñÿ.")
 	end
 end
 
@@ -376,46 +376,46 @@ function imgui.OnDrawFrame()
 		imgui.ShowCursor = true
 		imgui.SetNextWindowSize(imgui.ImVec2(600, 200), imgui.Cond.FirstUseEver)
 
-		imgui.Begin(u8'ĞĞ°ÑÑ‚Ñ€Ğ¾Ğ¹ĞºĞ¸', main_window_state)
+		imgui.Begin(u8'Íàñòğîéêè', main_window_state)
 
-		if imgui.Checkbox(u8'ĞœĞµĞ½Ñ ĞºĞ¾Ğ¾Ñ€Ğ´Ğ¸Ğ½Ğ°Ñ†Ğ¸Ğ¸', coordActive) then
+		if imgui.Checkbox(u8'Ìåíş êîîğäèíàöèè', coordActive) then
 			config.coordMenu.active = coordActive.v
-			if config.coordMenu.active then addScriptMsg("ĞœĞµĞ½Ñ ĞºĞ¾Ğ¾Ñ€Ğ´Ğ¸Ğ½Ğ°Ñ†Ğ¸Ğ¸ Ğ²ĞºĞ»ÑÑ‡ĞµĞ½Ğ¾.")
-			else addScriptMsg("ĞœĞµĞ½Ñ ĞºĞ¾Ğ¾Ñ€Ğ´Ğ¸Ğ½Ğ°Ñ†Ğ¸Ğ¸ Ğ¾Ñ‚ĞºĞ»ÑÑ‡ĞµĞ½Ğ¾.") end
+			if config.coordMenu.active then addScriptMsg("Ìåíş êîîğäèíàöèè âêëş÷åíî.")
+			else addScriptMsg("Ìåíş êîîğäèíàöèè îòêëş÷åíî.") end
 
 			inicfg.save(config, configPath)
 		end
 
-		if imgui.SliderFloat(u8"ĞŸĞ¾Ğ·Ğ¸Ñ†Ğ¸Ñ Ğ¿Ğ¾ Ğ³Ğ¾Ñ€Ğ¸Ğ·Ğ¾Ğ½Ñ‚Ğ°Ğ»Ğ¸", coordPosX, 0, screenX) then
+		if imgui.SliderFloat(u8"Ïîçèöèÿ ïî ãîğèçîíòàëè", coordPosX, 0, screenX) then
 			config.coordMenu.x = coordPosX.v
 			inicfg.save(config, configPath)
 		end
 
-		if imgui.SliderFloat(u8"ĞŸĞ¾Ğ·Ğ¸Ñ†Ğ¸Ñ Ğ¿Ğ¾ Ğ²ĞµÑ€Ñ‚Ğ¸ĞºĞ°Ğ»Ğ¸", coordPosY, 0, screenY) then
+		if imgui.SliderFloat(u8"Ïîçèöèÿ ïî âåğòèêàëè", coordPosY, 0, screenY) then
 			config.coordMenu.y = coordPosY.v
 			inicfg.save(config, configPath)
 		end
 
-		if imgui.Checkbox(u8'ĞĞ²Ñ‚Ğ¾Ğ¼ĞµÑ‚ĞºĞ°', autokvActive) then
+		if imgui.Checkbox(u8'Àâòîìåòêà', autokvActive) then
 			config.autokv.active = autokvActive.v
-			if config.autokv.active then addScriptMsg("ĞĞ²Ñ‚Ğ¾Ğ¼ĞµÑ‚ĞºĞ° Ğ²ĞºĞ»ÑÑ‡ĞµĞ½Ğ°.")
-			else addScriptMsg("ĞĞ²Ñ‚Ğ¾Ğ¼ĞµÑ‚ĞºĞ° Ğ¾Ñ‚ĞºĞ»ÑÑ‡ĞµĞ½Ğ°.") end
+			if config.autokv.active then addScriptMsg("Àâòîìåòêà âêëş÷åíà.")
+			else addScriptMsg("Àâòîìåòêà îòêëş÷åíà.") end
 
 			inicfg.save(config, configPath)
 		end
 
-		if imgui.Checkbox(u8'Ğ—Ğ°Ğ¿Ğ¸ÑÑŒ Ğ·Ğ²Ğ¾Ğ½ĞºĞ¾Ğ²', callRecorderActive) then
+		if imgui.Checkbox(u8'Çàïèñü çâîíêîâ', callRecorderActive) then
 			config.callRecorder.active = callRecorderActive.v
-			if config.callRecorder.active then addScriptMsg("Ğ¡Ğ¾Ñ…Ñ€Ğ°Ğ½ĞµĞ½Ğ¸Ğµ Ğ·Ğ²Ğ¾Ğ½ĞºĞ¾Ğ² Ğ²ĞºĞ»ÑÑ‡ĞµĞ½Ğ¾.") 
-			else addScriptMsg("Ğ¡Ğ¾Ñ…Ñ€Ğ°Ğ½ĞµĞ½Ğ¸Ğµ Ğ·Ğ²Ğ¾Ğ½ĞºĞ¾Ğ² Ğ¾Ñ‚ĞºĞ»ÑÑ‡ĞµĞ½Ğ¾.") end
+			if config.callRecorder.active then addScriptMsg("Ñîõğàíåíèå çâîíêîâ âêëş÷åíî.") 
+			else addScriptMsg("Ñîõğàíåíèå çâîíêîâ îòêëş÷åíî.") end
 
 			inicfg.save(config, configPath)
 		end
 
-		if imgui.Checkbox(u8'Ğ ĞµĞ¶Ğ¸Ğ¼ "Ñ‚Ğ¾Ğ»ÑŒĞºĞ¾ Ğ·Ğ²Ğ¾Ğ½Ğ¾Ğº"', onlyCallModeActive) then
+		if imgui.Checkbox(u8'Ğåæèì "òîëüêî çâîíîê"', onlyCallModeActive) then
 			config.onlyCallMode.active = onlyCallModeActive.v
-			if config.onlyCallMode.active then addScriptMsg("ĞÑ‚Ğ¾Ğ±Ñ€Ğ°Ğ¶ĞµĞ½Ğ¸Ğµ Ñ‚Ğ¾Ğ»ÑŒĞºĞ¾ Ñ‚ĞµĞ»ĞµÑ„Ğ¾Ğ½Ğ° Ğ¿Ñ€Ğ¸ Ğ·Ğ²Ğ¾Ğ½ĞºĞµ Ğ²ĞºĞ»ÑÑ‡ĞµĞ½Ğ¾.")
-			else addScriptMsg("ĞÑ‚Ğ¾Ğ±Ñ€Ğ°Ğ¶ĞµĞ½Ğ¸Ğµ Ñ‚Ğ¾Ğ»ÑŒĞºĞ¾ Ñ‚ĞµĞ»ĞµÑ„Ğ¾Ğ½Ğ° Ğ¿Ñ€Ğ¸ Ğ·Ğ²Ğ¾Ğ½ĞºĞµ Ğ¾Ñ‚ĞºĞ»ÑÑ‡ĞµĞ½Ğ¾.") end
+			if config.onlyCallMode.active then addScriptMsg("Îòîáğàæåíèå òîëüêî òåëåôîíà ïğè çâîíêå âêëş÷åíî.")
+			else addScriptMsg("Îòîáğàæåíèå òîëüêî òåëåôîíà ïğè çâîíêå îòêëş÷åíî.") end
 
 			inicfg.save(config, configPath)
 		end
@@ -436,22 +436,20 @@ function main()
 	sampRegisterChatCommand("alphahelp", function()
 		sampShowDialog(6405, "AlphaTools",
 		[[
-{4169E1}/alphahelp {ffffff}- Ñ„ÑƒĞ½ĞºÑ†Ğ¸Ğ¸ ÑĞºÑ€Ğ¸Ğ¿Ñ‚Ğ°.
-{4169E1}/alphasettings {ffffff}- Ğ½Ğ°ÑÑ‚Ñ€Ğ¾Ğ¹ĞºĞ¸ ÑĞºÑ€Ğ¸Ğ¿Ñ‚Ğ°.
-{4169E1}/setkv [ĞºĞ²Ğ°Ğ´Ñ€Ğ°Ñ‚] {ffffff}- ÑƒÑÑ‚Ğ°Ğ½Ğ°Ğ²Ğ»Ğ¸Ğ²Ğ°ĞµÑ‚ Ğ¼ĞµÑ‚ĞºÑƒ Ğ² Ğ²Ñ‹Ğ±Ñ€Ğ°Ğ½Ğ½Ñ‹Ğ¹ ĞºĞ²Ğ°Ğ´Ñ€Ğ°Ñ‚.
-{4169E1}/fc {ffffff}- Ğ¿Ğ¾Ğ»ÑƒÑ‡ĞµĞ½ Ğ²Ğ¸Ğ·ÑƒĞ°Ğ»ÑŒĞ½Ñ‹Ğ¹ ĞºĞ¾Ğ½Ñ‚Ğ°ĞºÑ‚ Ñ Ğ±Ğ°Ğ½Ğ´Ğ¸Ñ‚Ğ°Ğ¼Ğ¸. Ğ£Ğ±Ğ¸Ñ€Ğ°ĞµÑ‚ Ñ‚Ğ°Ğ¹Ğ¼ĞµÑ€ Ğ¿Ğ¾Ğ³Ğ¾Ğ½Ğ¸.
-{4169E1}/lc {ffffff}- Ğ¿Ğ¾Ñ‚ĞµÑ€ÑĞ½ Ğ²Ğ¸Ğ·ÑƒĞ°Ğ»ÑŒĞ½Ñ‹Ğ¹ ĞºĞ¾Ğ½Ñ‚Ğ°ĞºÑ‚ Ñ Ğ±Ğ°Ğ½Ğ´Ğ¸Ñ‚Ğ°Ğ¼Ğ¸. Ğ—Ğ°Ğ¿ÑƒÑĞºĞ°ĞµÑ‚ÑÑ Ñ‚Ğ°Ğ¹Ğ¼ĞµÑ€ Ğ¿Ğ¾Ğ³Ğ¾Ğ½Ğ¸.
-
-{4169E1}KLK {ffffff}- ĞºĞ°Ğº Ñ‡Ğ¸Ñ‚-ĞºĞ¾Ğ´, Ğ¾ÑÑ‚Ğ°Ğ½Ğ°Ğ²Ğ»Ğ¸Ğ²Ğ°ĞµÑ‚ Maverick Ğ² Ğ²Ğ¾Ğ·Ğ´ÑƒÑ…Ğµ, ĞµÑĞ»Ğ¸ ÑĞºĞ¾Ñ€Ğ¾ÑÑ‚ÑŒ Ğ¼ĞµĞ½ÑŒÑˆĞµ 2-ÑƒÑ….
-{4169E1}ZAD {ffffff}- ĞºĞ°Ğº Ñ‡Ğ¸Ñ‚-ĞºĞ¾Ğ´, Ñ„Ğ¸ĞºÑĞ¸Ñ€ÑƒĞµÑ‚ ĞºĞ°Ğ¼ĞµÑ€Ñƒ Ğ·Ğ° Ğ¿ĞµÑ€ÑĞ¾Ğ½Ğ°Ğ¶ĞµĞ¼.
-{4169E1}BK {ffffff}- ĞºĞ°Ğº Ñ‡Ğ¸Ñ‚-ĞºĞ¾Ğ´, Ğ¾Ñ‚Ğ¿Ñ€Ğ°Ğ²Ğ»ÑĞµÑ‚ Ğ¸Ğ½Ñ„Ğ¾Ñ€Ğ¼Ğ°Ñ†Ğ¸Ñ Ğ¾ Ñ‚ĞµĞºÑƒÑ‰ĞµĞ¼ Ğ¼ĞµÑÑ‚Ğ¾Ğ¿Ğ¾Ğ»Ğ¾Ğ¶ĞµĞ½Ğ¸Ğ¸ Ğ² Ğ´ĞµĞ¿Ğ°Ñ€Ñ‚Ğ°Ğ¼ĞµĞ½Ñ‚.
-
-{4169E1}ĞœĞµĞ½Ñ ĞºĞ¾Ğ¾Ñ€Ğ´Ğ¸Ğ½Ğ°Ñ†Ğ¸Ğ¸ {ffffff}- ÑƒĞºĞ°Ğ·Ñ‹Ğ²Ğ°ĞµÑ‚ Ğ²Ğ°ÑˆĞµ Ğ½Ğ°Ğ¿Ñ€Ğ°Ğ²Ğ»ĞµĞ½Ğ¸Ğµ, ĞºĞ²Ğ°Ğ´Ñ€Ğ°Ñ‚, Ğ²Ñ‹ÑĞ¾Ñ‚Ñƒ, Ñ€Ğ°ÑÑÑ‚Ğ¾ÑĞ½Ğ¸Ğµ Ğ´Ğ¾ Ğ¼ĞµÑ‚ĞºĞ¸, Ñ‚Ğ°Ğ¹Ğ¼ĞµÑ€ Ğ¿Ğ¾Ğ¸Ğ¼ĞºĞ¸.
-{4169E1}ĞĞ²Ñ‚Ğ¾Ğ¼ĞµÑ‚ĞºĞ° {ffffff}- Ğ°Ğ²Ñ‚Ğ¾Ğ¼Ğ°Ñ‚Ğ¸Ñ‡ĞµÑĞºĞ°Ñ ÑƒÑÑ‚Ğ°Ğ½Ğ¾Ğ²ĞºĞ° Ğ¼ĞµÑ‚ĞºĞ¸ Ğ¿Ñ€Ğ¸ ÑĞ¾Ğ¾Ğ±Ñ‰ĞµĞ½Ğ¸Ğ¸ Ğ² Ğ´ĞµĞ¿Ğ°Ñ€Ñ‚Ğ°Ğ¼ĞµĞ½Ñ‚.
-{4169E1}Ğ—Ğ°Ğ¿Ğ¸ÑÑŒ Ğ·Ğ²Ğ¾Ğ½ĞºĞ¾Ğ² {ffffff}- ÑĞ¾Ñ…Ñ€Ğ°Ğ½ÑĞµÑ‚ Ğ²ÑĞµ Ğ²Ğ°ÑˆĞ¸ Ğ·Ğ²Ğ¾Ğ½ĞºĞ¸ Ğ² Ñ‚ĞµĞºÑÑ‚Ğ¾Ğ²Ñ‹Ğ¹ Ñ„Ğ°Ğ¹Ğ» moonloader/callRecord.txt.
-{4169E1}Ğ ĞµĞ¶Ğ¸Ğ¼ "Ñ‚Ğ¾Ğ»ÑŒĞºĞ¾ Ğ·Ğ²Ğ¾Ğ½Ğ¾Ğº" {ffffff}- Ğ¿Ñ€Ğ¸ Ñ€Ğ°Ğ·Ğ³Ğ¾Ğ²Ğ¾Ñ€Ğµ Ğ¿Ğ¾ Ñ‚ĞµĞ»ĞµÑ„Ğ¾Ğ½Ñƒ Ğ²ÑĞµ Ğ¾ÑÑ‚Ğ°Ğ»ÑŒĞ½Ñ‹Ğµ ÑĞ¾Ğ¾Ğ±Ñ‰ĞµĞ½Ğ¸Ñ Ğ² Ñ‡Ğ°Ñ‚Ğµ Ğ½Ğµ Ğ¾Ñ‚Ğ¾Ğ±Ñ€Ğ°Ğ¶Ğ°ÑÑ‚ÑÑ.
+{4169E1}/alphahelp {ffffff}- ôóíêöèè ñêğèïòà.
+{4169E1}/alphasettings {ffffff}- íàñòğîéêè ñêğèïòà.
+{4169E1}/setkv [êâàäğàò] {ffffff}- óñòàíàâëèâàåò ìåòêó â âûáğàííûé êâàäğàò.
+{4169E1}/fc {ffffff}- ïîëó÷åí âèçóàëüíûé êîíòàêò ñ áàíäèòàìè. Óáèğàåò òàéìåğ ïîãîíè.
+{4169E1}/lc {ffffff}- ïîòåğÿí âèçóàëüíûé êîíòàêò ñ áàíäèòàìè. Çàïóñêàåòñÿ òàéìåğ ïîãîíè.
+{4169E1}KLK {ffffff}- êàê ÷èò-êîä, îñòàíàâëèâàåò Maverick â âîçäóõå, åñëè ñêîğîñòü ìåíüøå 2-óõ.
+{4169E1}ZAD {ffffff}- êàê ÷èò-êîä, ôèêñèğóåò êàìåğó çà ïåğñîíàæåì.
+{4169E1}BK {ffffff}- êàê ÷èò-êîä, îòïğàâëÿåò èíôîğìàöèş î òåêóùåì ìåñòîïîëîæåíèè â äåïàğòàìåíò.
+{4169E1}Ìåíş êîîğäèíàöèè {ffffff}- óêàçûâàåò âàøå íàïğàâëåíèå, êâàäğàò, âûñîòó, ğàññòîÿíèå äî ìåòêè, òàéìåğ ïîèìêè.
+{4169E1}Àâòîìåòêà {ffffff}- àâòîìàòè÷åñêàÿ óñòàíîâêà ìåòêè ïğè ñîîáùåíèè â äåïàğòàìåíò.
+{4169E1}Çàïèñü çâîíêîâ {ffffff}- ñîõğàíÿåò âñå âàøè çâîíêè â òåêñòîâûé ôàéë moonloader/callRecord.txt.
+{4169E1}Ğåæèì "òîëüêî çâîíîê" {ffffff}- ïğè ğàçãîâîğå ïî òåëåôîíó âñå îñòàëüíûå ñîîáùåíèÿ â ÷àòå íå îòîáğàæàşòñÿ.
 ]],
-		"Ğ—Ğ°ĞºÑ€Ñ‹Ñ‚ÑŒ",
+		"Çàêğûòü",
 		"",
 		0)
 	end)
@@ -459,16 +457,16 @@ function main()
 	sampRegisterChatCommand("setkv", setMarkerKV)
 	
 	sampRegisterChatCommand("fc", function()
-			addScriptMsg("Ğ’Ğ¸Ğ·ÑƒĞ°Ğ»ÑŒĞ½Ñ‹Ğ¹ ĞºĞ¾Ğ½Ñ‚Ğ°ĞºÑ‚ Ğ¿Ğ¾Ğ»ÑƒÑ‡ĞµĞ½.")
-			sampSendChat("/d Alpha, Ğ²Ğ¸Ğ·ÑƒĞ°Ğ»ÑŒĞ½Ñ‹Ğ¹ ĞºĞ¾Ğ½Ñ‚Ğ°ĞºÑ‚ Ñ Ğ½Ğ°Ñ€ÑƒÑˆĞ¸Ñ‚ĞµĞ»ĞµĞ¼ Ğ¿Ğ¾Ğ»ÑƒÑ‡ĞµĞ½ Ğ² "..kvadrat()..". Ğ’ĞµĞ´Ñƒ Ğ¿Ğ¾Ğ³Ğ¾Ğ½Ñ.")
+			addScriptMsg("Âèçóàëüíûé êîíòàêò ïîëó÷åí.")
+			sampSendChat("/d Alpha, âèçóàëüíûé êîíòàêò ñ íàğóøèòåëåì ïîëó÷åí â "..kvadrat()..". Âåäó ïîãîíş.")
 
 	end)
 		sampRegisterChatCommand("lc", function()
 			if (goFind) then
-				addScriptMsg("Ğ’ Ğ´Ğ°Ğ½Ğ½Ñ‹Ğ¹ Ğ¼Ğ¾Ğ¼ĞµĞ½Ñ‚ Ğ¸ Ñ‚Ğ°Ğº Ğ²ĞµĞ´ÑƒÑ‚ÑÑ Ğ¿Ğ¾Ğ¸ÑĞºĞ¸.")
+				addScriptMsg("Â äàííûé ìîìåíò è òàê âåäóòñÿ ïîèñêè.")
 			else
-				addScriptMsg("Ğ’Ğ¸Ğ·ÑƒĞ°Ğ»ÑŒĞ½Ñ‹Ğ¹ ĞºĞ¾Ğ½Ñ‚Ğ°ĞºÑ‚ Ğ¿Ğ¾Ñ‚ĞµÑ€ÑĞ½.")
-				sampSendChat("/d Alpha, Ğ²Ğ¸Ğ·ÑƒĞ°Ğ»ÑŒĞ½Ñ‹Ğ¹ ĞºĞ¾Ğ½Ñ‚Ğ°ĞºÑ‚ Ñ Ğ½Ğ°Ñ€ÑƒÑˆĞ¸Ñ‚ĞµĞ»ĞµĞ¼ Ğ¿Ğ¾Ñ‚ĞµÑ€ÑĞ½ Ğ² "..kvadrat()..". ĞĞ°Ñ‡Ğ¸Ğ½Ğ°Ğ¹Ñ‚Ğµ Ğ¿Ğ¾Ğ¸ÑĞºĞ¸.")
+				addScriptMsg("Âèçóàëüíûé êîíòàêò ïîòåğÿí.")
+				sampSendChat("/d Alpha, âèçóàëüíûé êîíòàêò ñ íàğóøèòåëåì ïîòåğÿí â "..kvadrat()..". Íà÷èíàéòå ïîèñêè.")
 			end
 	end)
 
@@ -478,7 +476,7 @@ function main()
 	end)
 
 
-	addScriptMsg("AlphaTools Ğ·Ğ°Ğ³Ñ€ÑƒĞ¶ĞµĞ½. ĞŸĞ¾Ğ¼Ğ¾Ñ‰ÑŒ: /alphahelp.")
+	addScriptMsg("AlphaTools çàãğóæåí. Ïîìîùü: /alphahelp.")
 
 	while true do wait(0)
 		testCheats()
@@ -515,21 +513,21 @@ function autoupdate(json_url, prefix, url)
               lua_thread.create(function(prefix)
                 local dlstatus = require('moonloader').download_status
                 local color = -1
-                sampAddChatMessage((prefix..'ĞĞ±Ğ½Ğ°Ñ€ÑƒĞ¶ĞµĞ½Ğ¾ Ğ¾Ğ±Ğ½Ğ¾Ğ²Ğ»ĞµĞ½Ğ¸Ğµ. ĞŸÑ‹Ñ‚Ğ°ÑÑÑŒ Ğ¾Ğ±Ğ½Ğ¾Ğ²Ğ¸Ñ‚ÑŒÑÑ c '..thisScript().version..' Ğ½Ğ° '..updateversion), color)
+                sampAddChatMessage((prefix..'Îáíàğóæåíî îáíîâëåíèå. Ïûòàşñü îáíîâèòüñÿ c '..thisScript().version..' íà '..updateversion), color)
                 wait(250)
                 downloadUrlToFile(updatelink, thisScript().path,
                   function(id3, status1, p13, p23)
                     if status1 == dlstatus.STATUS_DOWNLOADINGDATA then
-                      print(string.format('Ğ—Ğ°Ğ³Ñ€ÑƒĞ¶ĞµĞ½Ğ¾ %d Ğ¸Ğ· %d.', p13, p23))
+                      print(string.format('Çàãğóæåíî %d èç %d.', p13, p23))
                     elseif status1 == dlstatus.STATUS_ENDDOWNLOADDATA then
-                      print('Ğ—Ğ°Ğ³Ñ€ÑƒĞ·ĞºĞ° Ğ¾Ğ±Ğ½Ğ¾Ğ²Ğ»ĞµĞ½Ğ¸Ñ Ğ·Ğ°Ğ²ĞµÑ€ÑˆĞµĞ½Ğ°.')
-                      sampAddChatMessage((prefix..'ĞĞ±Ğ½Ğ¾Ğ²Ğ»ĞµĞ½Ğ¸Ğµ Ğ·Ğ°Ğ²ĞµÑ€ÑˆĞµĞ½Ğ¾!'), color)
+                      print('Çàãğóçêà îáíîâëåíèÿ çàâåğøåíà.')
+                      sampAddChatMessage((prefix..'Îáíîâëåíèå çàâåğøåíî!'), color)
                       goupdatestatus = true
                       lua_thread.create(function() wait(500) thisScript():reload() end)
                     end
                     if status1 == dlstatus.STATUSEX_ENDDOWNLOAD then
                       if goupdatestatus == nil then
-                        sampAddChatMessage((prefix..'ĞĞ±Ğ½Ğ¾Ğ²Ğ»ĞµĞ½Ğ¸Ğµ Ğ¿Ñ€Ğ¾ÑˆĞ»Ğ¾ Ğ½ĞµÑƒĞ´Ğ°Ñ‡Ğ½Ğ¾. Ğ—Ğ°Ğ¿ÑƒÑĞºĞ°Ñ ÑƒÑÑ‚Ğ°Ñ€ĞµĞ²ÑˆÑƒÑ Ğ²ĞµÑ€ÑĞ¸Ñ..'), color)
+                        sampAddChatMessage((prefix..'Îáíîâëåíèå ïğîøëî íåóäà÷íî. Çàïóñêàş óñòàğåâøóş âåğñèş..'), color)
                         update = false
                       end
                     end
@@ -539,11 +537,11 @@ function autoupdate(json_url, prefix, url)
               )
             else
               update = false
-              print('v'..thisScript().version..': ĞĞ±Ğ½Ğ¾Ğ²Ğ»ĞµĞ½Ğ¸Ğµ Ğ½Ğµ Ñ‚Ñ€ĞµĞ±ÑƒĞµÑ‚ÑÑ.')
+              print('v'..thisScript().version..': Îáíîâëåíèå íå òğåáóåòñÿ.')
             end
           end
         else
-          print('v'..thisScript().version..': ĞĞµ Ğ¼Ğ¾Ğ³Ñƒ Ğ¿Ñ€Ğ¾Ğ²ĞµÑ€Ğ¸Ñ‚ÑŒ Ğ¾Ğ±Ğ½Ğ¾Ğ²Ğ»ĞµĞ½Ğ¸Ğµ. Ğ¡Ğ¼Ğ¸Ñ€Ğ¸Ñ‚ĞµÑÑŒ Ğ¸Ğ»Ğ¸ Ğ¿Ñ€Ğ¾Ğ²ĞµÑ€ÑŒÑ‚Ğµ ÑĞ°Ğ¼Ğ¾ÑÑ‚Ğ¾ÑÑ‚ĞµĞ»ÑŒĞ½Ğ¾ Ğ½Ğ° '..url)
+          print('v'..thisScript().version..': Íå ìîãó ïğîâåğèòü îáíîâëåíèå. Ñìèğèòåñü èëè ïğîâåğüòå ñàìîñòîÿòåëüíî íà '..url)
           update = false
         end
       end
