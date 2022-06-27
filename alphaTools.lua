@@ -1,6 +1,6 @@
 script_name("alphaTools")
 script_author("Foxy_L")
-script_version("27.06.2022")
+script_version("25.06.2022")
 
 local events = require 'lib.samp.events'
 local inicfg = require 'inicfg'
@@ -401,17 +401,23 @@ function imgui.OnDrawFrame()
 	if call_window_state.v then
 		imgui.ShowCursor = true
 		imgui.SetNextWindowSize(imgui.ImVec2(600, 200), imgui.Cond.FirstUseEver)
+		
+		imgui.Begin(u8'Звонки', call_window_state)
 			file = io.open(callRecorderPath, "r")
-			local text = ""
 			if file ~= nil then
-			
-				imgui.Begin(u8'Звонки', call_window_state)
+				local text = ""
+				
 				 for line in file:lines() do 
 					text = text..line.."\n"
 				 end
+				 file:close()
+				 imgui.Text(u8:decode(text))
+			else
+				imgui.Text(u8"Нет звонков.")
 			end
-			file:close()
-			imgui.Text(u8:decode(text))
+			
+			
+			
 		imgui.End()
 	end
 	
