@@ -1,6 +1,6 @@
 script_name("alphaTools")
 script_author("Foxy_L")
-script_version("25.06.2022")
+script_version("27.06.2022")
 
 local events = require 'lib.samp.events'
 local inicfg = require 'inicfg'
@@ -24,6 +24,7 @@ local contactTimer = os.time()
 local goFind = false
 local searchTime = 900
 local main_window_state = imgui.ImBool(false)
+local call_window_state = imgui.ImBool(false)
 local screenX, screenY = getScreenResolution()
 local kvBlocked = false
 
@@ -129,94 +130,17 @@ function addScriptMsg(str)
 end
 
 function kvadrat()
-	local KV = {
-        [1] = "А",
-        [2] = "Б",
-        [3] = "В",
-        [4] = "Г",
-        [5] = "Д",
-        [6] = "Ж",
-        [7] = "З",
-        [8] = "И",
-        [9] = "К",
-        [10] = "Л",
-        [11] = "М",
-        [12] = "Н",
-        [13] = "О",
-        [14] = "П",
-        [15] = "Р",
-        [16] = "С",
-        [17] = "Т",
-        [18] = "У",
-        [19] = "Ф",
-        [20] = "Х",
-        [21] = "Ц",
-        [22] = "Ч",
-        [23] = "Ш",
-        [24] = "Я",
-    }
-
     local X, Y, Z = getCharCoordinates(PLAYER_PED)
     X = math.ceil((X + 3000) / 250)
     Y = math.ceil((Y * - 1 + 3000) / 250)
-    Y = KV[Y]
+    Y = string.sub("АБВГДЖЗИКЛМНОПРСТУФХЦЧШЯ",Y, Y)
 	if (Y == nil) then Y = "" end
     local KVX = (Y.."-"..X)
     return KVX
 end
 
 function kvadratnum(param)
-  local KV = {
-    ["А"] = 1,
-    ["Б"] = 2,
-    ["В"] = 3,
-    ["Г"] = 4,
-    ["Д"] = 5,
-    ["Ж"] = 6,
-    ["З"] = 7,
-    ["И"] = 8,
-    ["К"] = 9,
-    ["Л"] = 10,
-    ["М"] = 11,
-    ["Н"] = 12,
-    ["О"] = 13,
-    ["П"] = 14,
-    ["Р"] = 15,
-    ["С"] = 16,
-    ["Т"] = 17,
-    ["У"] = 18,
-    ["Ф"] = 19,
-    ["Х"] = 20,
-    ["Ц"] = 21,
-    ["Ч"] = 22,
-    ["Ш"] = 23,
-    ["Я"] = 24,
-    ["а"] = 1,
-    ["б"] = 2,
-    ["в"] = 3,
-    ["г"] = 4,
-    ["д"] = 5,
-    ["ж"] = 6,
-    ["з"] = 7,
-    ["и"] = 8,
-    ["к"] = 9,
-    ["л"] = 10,
-    ["м"] = 11,
-    ["н"] = 12,
-    ["о"] = 13,
-    ["п"] = 14,
-    ["р"] = 15,
-    ["с"] = 16,
-    ["т"] = 17,
-    ["у"] = 18,
-    ["ф"] = 19,
-    ["х"] = 20,
-    ["ц"] = 21,
-    ["ч"] = 22,
-    ["ш"] = 23,
-    ["я"] = 24,
-  }
-  return KV[param]
+  return string.find("АБВГДЖЗИКЛМНОПРСТУФХЦЧШЯ", param) or string.find("абвгджзиклмнопрстуфхцчшя", param)
 end
 
 
@@ -400,7 +324,7 @@ function COORDTest()
 end
 
 function findTest()
-	if (goFind and contactTimer+searchTime-os.time() < 1) then
+	if goFind and contactTimer+searchTime-os.time() < 1 then
 		goFind = false
 		addScriptMsg("Бандиты потеряны. Погоня не ведётся.")
 	end
@@ -419,8 +343,11 @@ function doEveryTime()
 end
 
 function imgui.OnDrawFrame()
+
+	imgui.ShowCursor = main_window_state.v or call_window_state.v
+	
+	
 	if main_window_state.v then
-		imgui.ShowCursor = true
 		imgui.SetNextWindowSize(imgui.ImVec2(600, 200), imgui.Cond.FirstUseEver)
 
 		imgui.Begin(u8'Настройки', main_window_state)
@@ -467,9 +394,28 @@ function imgui.OnDrawFrame()
 			inicfg.save(config, configPath)
 		end
 		imgui.End()
-	else
-		imgui.ShowCursor = false
 	end
+	
+	
+	
+	if call_window_state.v then
+		imgui.ShowCursor = true
+		imgui.SetNextWindowSize(imgui.ImVec2(600, 200), imgui.Cond.FirstUseEver)
+			file = io.open(callRecorderPath, "r")
+			local text = ""
+			if file ~= nil then
+			
+				imgui.Begin(u8'Звонки', call_window_state)
+				 for line in file:lines() do 
+					text = text..line.."\n"
+				 end
+			end
+			file:close()
+			imgui.Text(u8:decode(text))
+		imgui.End()
+	end
+	
+	
 end
 
 function main()
@@ -485,6 +431,7 @@ function main()
 {4169E1}/blockkv [квадрат] {ffffff}- отмечает перекрытую территорию относительно квадрата на карте.
 {4169E1}/fc {ffffff}- получен визуальный контакт с бандитами. Убирает таймер погони.
 {4169E1}/lc {ffffff}- потерян визуальный контакт с бандитами. Запускается таймер погони.
+{4169E1}/callsrec {ffffff}- открыть записи звонков.
 
 {4169E1}KLK {ffffff}- как чит-код, останавливает Maverick в воздухе, если скорость меньше 2-ух.
 {4169E1}ZAD {ffffff}- как чит-код, фиксирует камеру за персонажем.
@@ -521,6 +468,11 @@ function main()
 		sampRegisterChatCommand("alphasettings", function()
 			  main_window_state.v = not main_window_state.v
 			  imgui.Process = main_window_state.v
+	end)
+	
+	sampRegisterChatCommand("callsrec", function()
+			  call_window_state.v = not call_window_state.v
+			  imgui.Process = call_window_state.v
 	end)
 
 
